@@ -18,6 +18,12 @@
         {{ auth()->user()->role->nombre ?? 'Sin rol' }}
     </p>
 
+    @if(auth()->user()->role?->nombre === 'Administrador')
+        <p>
+            <a href="{{ route('usuarios.index') }}">Gestión de Usuarios</a>
+        </p>
+    @endif
+
     <form method="POST" action="{{ route('logout') }}">
         @csrf
 

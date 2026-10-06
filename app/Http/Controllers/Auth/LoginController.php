@@ -48,7 +48,7 @@ class LoginController extends Controller
             'ultimo_acceso' => now(),
         ]);
 
-        return redirect()->route('dashboard');
+        return redirect('/dashboard');
     }
 
     public function logout(): RedirectResponse
