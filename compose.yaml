@@ -1,0 +1,20 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: asadas_mysql
+    restart: unless-stopped
+
+    ports:
+      - "3306:3306"
+
+    environment:
+      MYSQL_DATABASE: asada_dev
+      MYSQL_USER: asada_user
+      MYSQL_PASSWORD: asada_local_2026
+      MYSQL_ROOT_PASSWORD: root_local_2026
+
+    volumes:
+      - asadas_mysql_data:/var/lib/mysql
+
+volumes:
+  asadas_mysql_data:
