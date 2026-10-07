@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateProyectoHu05Request;
 use App\Models\EstadoProyecto;
 use App\Models\Proyecto;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Models\EvidenciaProyecto;
 use Illuminate\Support\Facades\Storage;
@@ -14,14 +15,30 @@ use Illuminate\Support\Facades\Storage;
 class ProyectoController extends Controller
 {
   
-    public function index(): View
-    {
-        $proyectos = Proyecto::with(['estado', 'creador'])
-            ->latest()
-            ->get();
+    public function index(Request $request): View
+{
+    $query = Proyecto::with(['estado', 'creador']);
 
-        return view('proyectos.index', compact('proyectos'));
+    if ($request->filled('estado')) {
+        $query->where('estado_proyecto_id', $request->estado);
     }
+
+    if ($request->filled('criticidad')) {
+        $query->where('criticidad', $request->criticidad);
+    }
+
+    if ($request->filled('prioridad')) {
+        $query->where('prioridad', $request->prioridad);
+    }
+
+    $proyectos = $query
+        ->latest()
+        ->get();
+
+    $estados = EstadoProyecto::orderBy('nombre')->get();
+
+    return view('proyectos.index', compact('proyectos', 'estados'));
+}
 
     
     public function create(): View
