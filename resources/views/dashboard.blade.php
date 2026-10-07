@@ -32,5 +32,28 @@
         </button>
     </form>
 
+    <h2>Gestión de proyectos</h2>
+
+<a href="{{ route('proyectos.index') }}"
+   style="display:inline-block;
+          padding:10px 15px;
+          background:#007bff;
+          color:white;
+          text-decoration:none;
+          border-radius:5px;">
+    Ver iniciativas
+</a>
+
+<a href="{{ route('proyectos.create') }}"
+   style="display:inline-block;
+          padding:10px 15px;
+          background:#28a745;
+          color:white;
+          text-decoration:none;
+          border-radius:5px;
+          margin-left:10px;">
+    Registrar iniciativa
+</a>
+
 </body>
 </html>
