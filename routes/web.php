@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProyectoController;
 
 Route::middleware('guest')->group(function () {
 
@@ -44,6 +45,26 @@ Route::middleware('auth')->group(function () {
 
         Route::patch('/usuarios/{usuario}/desactivar', [UserController::class, 'desactivar'])
             ->name('usuarios.desactivar');
+
+    // HU-04: Registro y visualización de iniciativas
+        Route::get('/proyectos', [ProyectoController::class, 'index'])
+            ->name('proyectos.index');
+
+        Route::get('/proyectos/crear', [ProyectoController::class, 'create'])
+            ->name('proyectos.create');
+
+        Route::post('/proyectos', [ProyectoController::class, 'store'])
+            ->name('proyectos.store');
+
+    // HU-05: Información complementaria de la iniciativa
+        Route::get('/proyectos/{proyecto}/hu05', [ProyectoController::class, 'editHu05'])
+            ->name('proyectos.hu05.edit');
+
+        Route::put('/proyectos/{proyecto}/hu05', [ProyectoController::class, 'updateHu05'])
+            ->name('proyectos.hu05.update');
+
+        Route::get('/proyectos/{proyecto}', [ProyectoController::class, 'show'])
+            ->name('proyectos.show');
     });
 });
 
