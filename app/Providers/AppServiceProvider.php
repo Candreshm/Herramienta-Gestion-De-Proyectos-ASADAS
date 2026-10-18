@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,10 +14,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Forzar HTTPS y la URL correcta de Codespaces
-        if (str_contains(config('app.url'), 'github.dev')) {
+        if ($this->app->environment(['staging', 'production'])) {
             URL::forceScheme('https');
-            URL::forceRootUrl(config('app.url'));
         }
     }
 }
