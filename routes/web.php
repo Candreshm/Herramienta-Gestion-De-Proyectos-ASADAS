@@ -69,5 +69,5 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/', function () {
-    return redirect(config('app.url') . '/login');
+    return redirect()->route('login');
 });
