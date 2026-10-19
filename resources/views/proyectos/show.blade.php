@@ -58,6 +58,14 @@
             margin-bottom: 15px;
             border: 1px solid #c3e6cb;
         }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 3px;
+            margin-bottom: 15px;
+                 border: 1px solid #f5c6cb;
+        }
     </style>
 </head>
 
@@ -68,6 +76,12 @@
     @if(session('success'))
         <div class="alert-success">
             {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert-error">
+            {{ session('error') }}
         </div>
     @endif
 
@@ -169,13 +183,21 @@
             {{ $proyecto->prioridad ?: 'No registrada' }}
         </p>
 
-    <p>
+        <p>
         <a
             href="{{ route('proyectos.index') }}"
             class="btn btn-primary"
         >
             &larr; Volver al listado
         </a>
+    @if (!in_array($proyecto->estado->nombre, ['Aprobado', 'Finalizado'], true))
+        <a
+            href="{{ route('proyectos.edit', $proyecto) }}"
+            class="btn btn-primary"
+        >
+            Editar proyecto
+        </a>
+    @endif
         <a
             href="{{ route('proyectos.hu05.edit', $proyecto) }}"
             style="
@@ -186,10 +208,25 @@
                 text-decoration:none;
                 border-radius:5px;
                 margin-right:10px;
-    "
+            "
         >
             Completar información HU-05
-</a>
+        </a>
+
+        <a
+            href="{{ route('proyectos.evaluacion.create', $proyecto) }}"
+            class="btn btn-primary"
+        >
+            Registrar evaluación HU-08
+        </a>
+
+        <a
+            href="{{ route('proyectos.evaluacion.index', $proyecto) }}"
+            class="btn btn-primary"
+        >
+            Ver historial de evaluaciones
+        </a>
+
     </p>
 
     <hr>

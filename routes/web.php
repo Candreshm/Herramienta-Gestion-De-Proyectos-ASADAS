@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\EvaluacionProyectoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProyectoController;
 
@@ -63,8 +64,36 @@ Route::middleware('auth')->group(function () {
         Route::put('/proyectos/{proyecto}/hu05', [ProyectoController::class, 'updateHu05'])
             ->name('proyectos.hu05.update');
 
+   // HU-07: Edición de proyectos
+        Route::get(
+            '/proyectos/{proyecto}/editar',
+            [ProyectoController::class, 'edit']
+        )->name('proyectos.edit');
+
+        Route::put(
+            '/proyectos/{proyecto}',
+            [ProyectoController::class, 'update']
+        )->name('proyectos.update');
+
+   // HU-08: Evaluación de proyectos
+        Route::get(
+            '/proyectos/{proyecto}/evaluaciones',
+            [EvaluacionProyectoController::class, 'index']
+        )->name('proyectos.evaluacion.index');
+
+        Route::get(
+            '/proyectos/{proyecto}/evaluacion/crear',
+            [EvaluacionProyectoController::class, 'create']
+        )->name('proyectos.evaluacion.create');
+
+        Route::post(
+            '/proyectos/{proyecto}/evaluacion',
+            [EvaluacionProyectoController::class, 'store']
+        )->name('proyectos.evaluacion.store');
+
         Route::get('/proyectos/{proyecto}', [ProyectoController::class, 'show'])
             ->name('proyectos.show');
+
     });
 });
 
