@@ -13,5 +13,7 @@ class DatabaseSeeder extends Seeder
         AdminSeeder::class,
         EstadoProyectoSeeder::class,
     ]);
+    $this->call(EvaluacionSeeder::class);
 }
+
 }

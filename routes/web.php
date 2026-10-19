@@ -65,6 +65,12 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/proyectos/{proyecto}', [ProyectoController::class, 'show'])
             ->name('proyectos.show');
+
+    // HU-09 y HU-10
+        Route::get('/ranking', [\App\Http\Controllers\ViabilidadController::class, 'ranking'])
+            ->name('viabilidad.ranking');
+        Route::post('/viabilidad/calcular/{id}', [\App\Http\Controllers\ViabilidadController::class, 'calcular'])
+            ->name('viabilidad.calcular');
     });
 });
 
