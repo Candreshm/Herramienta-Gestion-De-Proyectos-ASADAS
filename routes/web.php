@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EvaluacionProyectoController;
 use App\Http\Controllers\ProyectoController;
+use App\Http\Controllers\ViabilidadController;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
 
@@ -25,6 +27,7 @@ Route::middleware('auth')->group(function () {
 
     // HU-02 y HU-03: Gestión de usuarios (solo Administrador)
     Route::middleware('admin')->group(function () {
+
         Route::get('/usuarios', [UserController::class, 'index'])
             ->name('usuarios.index');
 
@@ -46,7 +49,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('/usuarios/{usuario}/desactivar', [UserController::class, 'desactivar'])
             ->name('usuarios.desactivar');
 
-    // HU-04: Registro y visualización de iniciativas
+        // HU-04: Registro y visualización de iniciativas
         Route::get('/proyectos', [ProyectoController::class, 'index'])
             ->name('proyectos.index');
 
@@ -56,18 +59,56 @@ Route::middleware('auth')->group(function () {
         Route::post('/proyectos', [ProyectoController::class, 'store'])
             ->name('proyectos.store');
 
-    // HU-05: Información complementaria de la iniciativa
+        // HU-05: Información complementaria de la iniciativa
         Route::get('/proyectos/{proyecto}/hu05', [ProyectoController::class, 'editHu05'])
             ->name('proyectos.hu05.edit');
 
         Route::put('/proyectos/{proyecto}/hu05', [ProyectoController::class, 'updateHu05'])
             ->name('proyectos.hu05.update');
 
+        // HU-07: Edición de proyectos
+        Route::get(
+            '/proyectos/{proyecto}/editar',
+            [ProyectoController::class, 'edit']
+        )->name('proyectos.edit');
+
+        Route::put(
+            '/proyectos/{proyecto}',
+            [ProyectoController::class, 'update']
+        )->name('proyectos.update');
+
+        // HU-08: Evaluación de proyectos
+        Route::get(
+            '/proyectos/{proyecto}/evaluaciones',
+            [EvaluacionProyectoController::class, 'index']
+        )->name('proyectos.evaluacion.index');
+
+        Route::get(
+            '/proyectos/{proyecto}/evaluacion/crear',
+            [EvaluacionProyectoController::class, 'create']
+        )->name('proyectos.evaluacion.create');
+
+        Route::post(
+            '/proyectos/{proyecto}/evaluacion',
+            [EvaluacionProyectoController::class, 'store']
+        )->name('proyectos.evaluacion.store');
+
         Route::get('/proyectos/{proyecto}', [ProyectoController::class, 'show'])
             ->name('proyectos.show');
+
+        // HU-09 y HU-10: Viabilidad y ranking
+        Route::get(
+            '/ranking',
+            [ViabilidadController::class, 'ranking']
+        )->name('viabilidad.ranking');
+
+        Route::post(
+            '/viabilidad/calcular/{id}',
+            [ViabilidadController::class, 'calcular']
+        )->name('viabilidad.calcular');
     });
 });
 
 Route::get('/', function () {
-    return redirect(config('app.url') . '/login');
+    return redirect()->route('login');
 });
