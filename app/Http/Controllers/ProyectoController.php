@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProyectoRequest;
 use App\Http\Requests\UpdateProyectoHu05Request;
+use App\Http\Requests\UpdateProyectoRequest;
 use App\Models\EstadoProyecto;
 use App\Models\Proyecto;
 use Illuminate\Http\RedirectResponse;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ProyectoController extends Controller
 {
-  
+
     public function index(): View
     {
         $proyectos = Proyecto::with(['estado', 'creador'])
@@ -63,6 +64,57 @@ class ProyectoController extends Controller
         return view('proyectos.show', compact('proyecto'));
     }
 
+    public function edit(Proyecto $proyecto): View|RedirectResponse
+    {
+        $proyecto->load('estado');
+        $estado = $proyecto->estado?->nombre;
+
+        if (in_array($estado, ['Aprobado', 'Finalizado'], true)) {
+            return redirect()
+                ->route('proyectos.show', $proyecto)
+                ->with(
+                    'error',
+                    'No se puede editar un proyecto aprobado o finalizado.'
+                );
+        }
+
+    return view('proyectos.edit', compact('proyecto'));
+    }
+
+    public function update(
+        UpdateProyectoRequest $request,
+        Proyecto $proyecto
+    ): RedirectResponse {
+        $proyecto->load('estado');
+
+        $estado = $proyecto->estado?->nombre;
+
+        if (in_array($estado, ['Aprobado', 'Finalizado'], true)) {
+            return redirect()
+                ->route('proyectos.show', $proyecto)
+                ->with(
+                    'error',
+                    'No se puede modificar un proyecto aprobado o finalizado.'
+                );
+        }
+
+        $proyecto->update([
+            'codigo' => $request->codigo,
+            'nombre' => $request->nombre,
+            'descripcion' => $request->descripcion,
+            'objetivo' => $request->objetivo,
+        ]);
+
+        return redirect()
+            ->route('proyectos.show', $proyecto)
+            ->with(
+                'success',
+                'El proyecto se actualizó correctamente.'
+            );
+}
+
+
+
     public function editHu05(Proyecto $proyecto): View
 {
     return view('proyectos.hu05', compact('proyecto'));
@@ -108,13 +160,5 @@ class ProyectoController extends Controller
             'success',
             'La información de HU-05 se guardó correctamente.'
         );
-}
-
-    return redirect()
-        ->route('proyectos.show', $proyecto)
-        ->with(
-            'success',
-            'La información de HU-05 se guardó correctamente.'
-        );
-}
+    }
 }
