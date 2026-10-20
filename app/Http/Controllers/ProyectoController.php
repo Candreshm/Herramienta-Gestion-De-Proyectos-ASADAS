@@ -6,33 +6,51 @@ use App\Http\Requests\StoreProyectoRequest;
 use App\Http\Requests\UpdateProyectoHu05Request;
 use App\Http\Requests\UpdateProyectoRequest;
 use App\Models\EstadoProyecto;
+use App\Models\EvidenciaProyecto;
 use App\Models\Proyecto;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
-use App\Models\EvidenciaProyecto;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 class ProyectoController extends Controller
 {
-
-    public function index(): View
+    public function index(Request $request): View
     {
-        $proyectos = Proyecto::with(['estado', 'creador'])
+        $query = Proyecto::with(['estado', 'creador']);
+
+        if ($request->filled('estado')) {
+            $query->where('estado_proyecto_id', $request->estado);
+        }
+
+        if ($request->filled('criticidad')) {
+            $query->where('criticidad', $request->criticidad);
+        }
+
+        if ($request->filled('prioridad')) {
+            $query->where('prioridad', $request->prioridad);
+        }
+
+        $proyectos = $query
             ->latest()
             ->get();
 
-        return view('proyectos.index', compact('proyectos'));
+        $estados = EstadoProyecto::orderBy('nombre')->get();
+
+        return view(
+            'proyectos.index',
+            compact('proyectos', 'estados')
+        );
     }
 
-    
     public function create(): View
     {
         return view('proyectos.create');
     }
 
-    
-    public function store(StoreProyectoRequest $request): RedirectResponse
-    {
+    public function store(
+        StoreProyectoRequest $request
+    ): RedirectResponse {
         $estadoRegistrado = EstadoProyecto::where(
             'nombre',
             'Registrado'
@@ -56,20 +74,28 @@ class ProyectoController extends Controller
             );
     }
 
-    
     public function show(Proyecto $proyecto): View
     {
         $proyecto->load(['estado', 'creador']);
 
-        return view('proyectos.show', compact('proyecto'));
+        return view(
+            'proyectos.show',
+            compact('proyecto')
+        );
     }
 
-    public function edit(Proyecto $proyecto): View|RedirectResponse
-    {
+    public function edit(
+        Proyecto $proyecto
+    ): View|RedirectResponse {
         $proyecto->load('estado');
+
         $estado = $proyecto->estado?->nombre;
 
-        if (in_array($estado, ['Aprobado', 'Finalizado'], true)) {
+        if (in_array(
+            $estado,
+            ['Aprobado', 'Finalizado'],
+            true
+        )) {
             return redirect()
                 ->route('proyectos.show', $proyecto)
                 ->with(
@@ -78,7 +104,10 @@ class ProyectoController extends Controller
                 );
         }
 
-    return view('proyectos.edit', compact('proyecto'));
+        return view(
+            'proyectos.edit',
+            compact('proyecto')
+        );
     }
 
     public function update(
@@ -89,7 +118,11 @@ class ProyectoController extends Controller
 
         $estado = $proyecto->estado?->nombre;
 
-        if (in_array($estado, ['Aprobado', 'Finalizado'], true)) {
+        if (in_array(
+            $estado,
+            ['Aprobado', 'Finalizado'],
+            true
+        )) {
             return redirect()
                 ->route('proyectos.show', $proyecto)
                 ->with(
@@ -111,54 +144,57 @@ class ProyectoController extends Controller
                 'success',
                 'El proyecto se actualizó correctamente.'
             );
-}
-
-
-
-    public function editHu05(Proyecto $proyecto): View
-{
-    return view('proyectos.hu05', compact('proyecto'));
-}
-
-    public function updateHu05(
-    UpdateProyectoHu05Request $request,
-    Proyecto $proyecto
-):      RedirectResponse {
-        $proyecto->update([
-        'justificacion' => $request->justificacion,
-        'costo_estimado' => $request->costo_estimado,
-        'impacto_esperado' => $request->impacto_esperado,
-        'nivel_riesgo' => $request->nivel_riesgo,
-        'criticidad' => $request->criticidad,
-        'prioridad' => $request->prioridad,
-    ]);
-
-    if ($request->hasFile('evidencia')) {
-        $archivo = $request->file('evidencia');
-
-        $ruta = $archivo->store(
-            'evidencias/proyectos',
-            'public'
-        );
-
-        EvidenciaProyecto::create([
-            'proyecto_id' => $proyecto->id,
-            'nombre_original' => $archivo->getClientOriginalName(),
-            'ruta' => $ruta,
-            'tipo_mime' => $archivo->getMimeType(),
-            'tamano' => $archivo->getSize(),
-            'hash' => hash_file(
-                'sha256',
-                $archivo->getRealPath()
-            ),
-        ]);
     }
 
-    return redirect()
-        ->route('proyectos.show', $proyecto)
-        ->with(
-            'success',
-            'La información de HU-05 se guardó correctamente.'
+    public function editHu05(
+        Proyecto $proyecto
+    ): View {
+        return view(
+            'proyectos.hu05',
+            compact('proyecto')
         );
+    }
+
+    public function updateHu05(
+        UpdateProyectoHu05Request $request,
+        Proyecto $proyecto
+    ): RedirectResponse {
+        $proyecto->update([
+            'justificacion' => $request->justificacion,
+            'costo_estimado' => $request->costo_estimado,
+            'impacto_esperado' => $request->impacto_esperado,
+            'nivel_riesgo' => $request->nivel_riesgo,
+            'criticidad' => $request->criticidad,
+            'prioridad' => $request->prioridad,
+        ]);
+
+        if ($request->hasFile('evidencia')) {
+            $archivo = $request->file('evidencia');
+
+            $ruta = $archivo->store(
+                'evidencias/proyectos',
+                'public'
+            );
+
+            EvidenciaProyecto::create([
+                'proyecto_id' => $proyecto->id,
+                'nombre_original' =>
+                    $archivo->getClientOriginalName(),
+                'ruta' => $ruta,
+                'tipo_mime' => $archivo->getMimeType(),
+                'tamano' => $archivo->getSize(),
+                'hash' => hash_file(
+                    'sha256',
+                    $archivo->getRealPath()
+                ),
+            ]);
+        }
+
+        return redirect()
+            ->route('proyectos.show', $proyecto)
+            ->with(
+                'success',
+                'La información de HU-05 se guardó correctamente.'
+            );
     }
 }
