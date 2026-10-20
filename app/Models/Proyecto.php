@@ -50,6 +50,11 @@ class Proyecto extends Model
         );
     }
 
+    public function evaluacion()
+    {
+        return $this->hasOne(EvaluacionProyecto::class, 'proyecto_id');
+    }
+
     public function evidencias(): HasMany
     {
         return $this->hasMany(
