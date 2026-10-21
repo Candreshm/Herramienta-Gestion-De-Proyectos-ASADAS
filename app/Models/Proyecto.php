@@ -62,10 +62,14 @@ class Proyecto extends Model
             EvidenciaProyecto::class,
             'proyecto_id'
         );
-}
-
-    public function modeloViabilidad(): BelongsTo
-    {
-        return $this->belongsTo(ModeloViabilidad::class, 'viabilidad_modelo_id');
     }
+
+    public function evaluaciones(): HasMany
+    {
+        return $this->hasMany(
+            EvaluacionProyecto::class,
+            'proyecto_id'
+        );
+    }
+
 }
