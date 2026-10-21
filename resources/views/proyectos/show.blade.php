@@ -71,6 +71,12 @@
         </div>
     @endif
 
+    @if($errors->has('viabilidad'))
+        <div class="alert-success" style="background-color:#f8d7da;color:#721c24;border-color:#f5c6cb;">
+            {{ $errors->first('viabilidad') }}
+        </div>
+    @endif
+
     <div class="detalle">
 
         <div class="campo">
@@ -190,7 +196,20 @@
         >
             Completar información HU-05
 </a>
+        <form method="POST" action="{{ route('proyectos.viabilidad.evaluar', $proyecto) }}" style="display:inline-block;">
+            @csrf
+            <button type="submit" class="btn" style="background:#6f42c1;color:white;border:0;cursor:pointer;">Aplicar modelo de viabilidad</button>
+        </form>
     </p>
+
+    @if($proyecto->viabilidad_evaluada_at)
+        <h2>Resultado de viabilidad</h2>
+        <p><strong>Puntuación:</strong> {{ number_format($proyecto->viabilidad_puntuacion, 2) }} / 100</p>
+        <p><strong>Resultado:</strong> <span class="estado">{{ $proyecto->viabilidad_resultado }}</span></p>
+        <p><strong>Evaluado:</strong> {{ $proyecto->viabilidad_evaluada_at->format('d/m/Y H:i') }}</p>
+    @else
+        <p>Aún no se ha aplicado el modelo de viabilidad.</p>
+    @endif
 
     <hr>
 

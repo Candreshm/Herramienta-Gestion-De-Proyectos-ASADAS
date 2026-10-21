@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProyectoController;
+use App\Http\Controllers\ModeloViabilidadController;
 
 Route::middleware('guest')->group(function () {
 
@@ -25,6 +26,12 @@ Route::middleware('auth')->group(function () {
 
     // HU-02 y HU-03: Gestión de usuarios (solo Administrador)
     Route::middleware('admin')->group(function () {
+        Route::get('/configuracion/viabilidad', [ModeloViabilidadController::class, 'edit'])
+            ->name('viabilidad.edit');
+
+        Route::put('/configuracion/viabilidad', [ModeloViabilidadController::class, 'update'])
+            ->name('viabilidad.update');
+
         Route::get('/usuarios', [UserController::class, 'index'])
             ->name('usuarios.index');
 

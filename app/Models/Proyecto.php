@@ -21,6 +21,10 @@ class Proyecto extends Model
     'nivel_riesgo',
     'criticidad',
     'prioridad',
+    'viabilidad_puntuacion',
+    'viabilidad_resultado',
+    'viabilidad_evaluada_at',
+    'viabilidad_modelo_id',
     'estado_proyecto_id',
     'creado_por_id',
     'activo',
@@ -30,6 +34,8 @@ class Proyecto extends Model
     {
          return [
             'costo_estimado' => 'decimal:2',
+            'viabilidad_puntuacion' => 'decimal:2',
+            'viabilidad_evaluada_at' => 'datetime',
             'activo' => 'boolean',
          ];
     }
@@ -57,4 +63,9 @@ class Proyecto extends Model
             'proyecto_id'
         );
 }
+
+    public function modeloViabilidad(): BelongsTo
+    {
+        return $this->belongsTo(ModeloViabilidad::class, 'viabilidad_modelo_id');
+    }
 }
