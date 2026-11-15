@@ -96,16 +96,31 @@ Route::middleware('auth')->group(function () {
         Route::get('/proyectos/{proyecto}', [ProyectoController::class, 'show'])
             ->name('proyectos.show');
 
-            // HU-12 y HU-15
-            Route::get(
-                '/gestion-estados', 
-                [\App\Http\Controllers\ProyectoEstadoController::class, 'index']
-            )->name('proyectos.estados');
-        Route::get('/proyectos/estados', [\App\Http\Controllers\ProyectoEstadoController::class, 'index'])->name('proyectos.estados');
-        Route::post('/proyectos/{proyecto}/aprobar', [\App\Http\Controllers\ProyectoEstadoController::class, 'aprobar'])->name('proyectos.aprobar');
-        Route::post('/proyectos/{proyecto}/rechazar', [\App\Http\Controllers\ProyectoEstadoController::class, 'rechazar'])->name('proyectos.rechazar');
-        Route::post('/proyectos/{proyecto}/cambiar-estado', [\App\Http\Controllers\ProyectoEstadoController::class, 'cambiarEstado'])->name('proyectos.cambiarEstado');
-        Route::get('/proyectos/{proyecto}', [ProyectoController::class, 'show'])->name('proyectos.show');
+        // HU-12 y HU-15
+        Route::get(
+            '/gestion-estados', 
+            [\App\Http\Controllers\ProyectoEstadoController::class, 'index']
+        )->name('proyectos.estados');
+        Route::get(
+            '/proyectos/estados', 
+            [\App\Http\Controllers\ProyectoEstadoController::class, 'index']
+        )->name('proyectos.estados');
+        Route::post(
+            '/proyectos/{proyecto}/aprobar', 
+            [\App\Http\Controllers\ProyectoEstadoController::class, 'aprobar']
+        )->name('proyectos.aprobar');
+        Route::post(
+            '/proyectos/{proyecto}/rechazar', 
+            [\App\Http\Controllers\ProyectoEstadoController::class, 'rechazar']
+        )->name('proyectos.rechazar');
+        Route::post(
+            '/proyectos/{proyecto}/cambiar-estado', 
+            [\App\Http\Controllers\ProyectoEstadoController::class, 'cambiarEstado']
+        )->name('proyectos.cambiarEstado');
+        Route::get(
+            '/proyectos/{proyecto}', 
+            [ProyectoController::class, 'show']
+        )->name('proyectos.show');
 
         // HU-09 y HU-10: Viabilidad y ranking
         Route::get(
