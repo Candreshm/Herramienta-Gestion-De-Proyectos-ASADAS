@@ -71,4 +71,27 @@ class Proyecto extends Model
         );
     }
 
+    public function aprobaciones(): HasMany
+    {
+        return $this->hasMany(
+            Aprobacion::class,
+            'proyecto_id'
+        );
+    }
+
+    public function hitos(): HasMany
+    {
+        return $this->hasMany(Hito::class, 'proyecto_id');
+    }
+
+    public function avances(): HasMany
+    {
+        return $this->hasMany(AvanceProyecto::class, 'proyecto_id');
+    }
+
+    public function incidencias(): HasMany
+    {
+        return $this->hasMany(Incidencia::class, 'proyecto_id');
+    }
+
 }

@@ -76,12 +76,14 @@ class ProyectoController extends Controller
 
     public function show(Proyecto $proyecto): View
     {
-        $proyecto->load(['estado', 'creador']);
+        $proyecto->load([
+            'estado',
+            'creador',
+            'aprobaciones.responsable',
+            'aprobaciones.registradoPor'
+        ]);
 
-        return view(
-            'proyectos.show',
-            compact('proyecto')
-        );
+        return view('proyectos.show', compact('proyecto'));
     }
 
     public function edit(
