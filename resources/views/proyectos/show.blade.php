@@ -182,52 +182,124 @@
             <strong>Prioridad:</strong><br>
             {{ $proyecto->prioridad ?: 'No registrada' }}
         </p>
+        
+        @if (auth()->user()->role?->nombre === 'Administrador')
 
         <p>
-        <a
-            href="{{ route('proyectos.index') }}"
-            class="btn btn-primary"
-        >
-            &larr; Volver al listado
-        </a>
-    @if (!in_array($proyecto->estado->nombre, ['Aprobado', 'Finalizado'], true))
-        <a
-            href="{{ route('proyectos.edit', $proyecto) }}"
-            class="btn btn-primary"
-        >
-            Editar proyecto
-        </a>
+            <a href="{{ route('proyectos.index') }}" class="btn btn-primary">
+                &larr; Volver al listado
+            </a>
+
+        @if (!in_array($proyecto->estado->nombre, ['Aprobado', 'Finalizado'], true))
+            <a href="{{ route('proyectos.edit', $proyecto) }}" class="btn btn-primary">
+                Editar proyecto
+            </a>
+        @endif
+
+            <a href="{{ route('proyectos.hu05.edit', $proyecto) }}"
+               class="btn btn-primary">
+                Completar información HU-05
+            </a>
+
+            <a href="{{ route('proyectos.evaluacion.create', $proyecto) }}"
+               class="btn btn-primary">
+                Registrar evaluación HU-08
+            </a>
+
+            <a href="{{ route('proyectos.evaluacion.index', $proyecto) }}"
+               class="btn btn-primary">
+                Ver historial de evaluaciones
+            </a>
+        </p>
+
+        @endif
+
+        @if (in_array(auth()->user()->role?->nombre, ['Administrador', 'Secretaría'], true))
+
+    <hr>
+
+    <h2>HU-14: Acuerdos y decisiones</h2>
+
+        <p>
+            <a href="{{ route('proyectos.aprobaciones.create', $proyecto) }}"
+               class="btn btn-primary">
+                Registrar acuerdo
+            </a>
+
+            <a href="{{ route('proyectos.aprobaciones.index', $proyecto) }}"
+               class="btn btn-primary">
+                Consultar historial de acuerdos
+            </a>
+        </p>
+
+    <h3>Últimos acuerdos registrados</h3>
+
+        @forelse($proyecto->aprobaciones->sortByDesc('fecha_acuerdo')->take(5) as $aprobacion)
+
+            <div class="detalle">
+
+                <div class="campo">
+                    <strong>Decisión:</strong>
+                    {{ $aprobacion->tipo_decision }}
+            </div>
+
+                <div class="campo">
+                    <strong>Fecha:</strong>
+                    {{ $aprobacion->fecha_acuerdo->format('d/m/Y') }}
+            </div>
+
+                <div class="campo">
+                    <strong>Responsable:</strong>
+                    {{ $aprobacion->responsable->name }}
+            </div>
+
+                <div class="campo">
+                    <strong>Justificación:</strong>
+                    {{ $aprobacion->justificacion }}
+            </div>
+
+        </div>
+
+        @empty
+
+        <p>No hay acuerdos registrados para este proyecto.</p>
+
+        @endforelse
+
+        
     @endif
-        <a
-            href="{{ route('proyectos.hu05.edit', $proyecto) }}"
-            style="
-                display:inline-block;
-                padding:10px 15px;
-                background:#28a745;
-                color:white;
-                text-decoration:none;
-                border-radius:5px;
-                margin-right:10px;
-            "
-        >
-            Completar información HU-05
-        </a>
 
-        <a
-            href="{{ route('proyectos.evaluacion.create', $proyecto) }}"
-            class="btn btn-primary"
-        >
-            Registrar evaluación HU-08
-        </a>
+    @if (
+        auth()->user()->activo &&
+        (int) auth()->id() === (int) $proyecto->creado_por_id
+    )
+        <hr>
 
-        <a
-            href="{{ route('proyectos.evaluacion.index', $proyecto) }}"
-            class="btn btn-primary"
-        >
-            Ver historial de evaluaciones
-        </a>
+        <h2>HU-17: Seguimiento del proyecto</h2>
 
-    </p>
+        <p>
+                Desde esta sección puede administrar los hitos, registrar los
+                avances y dar seguimiento a las incidencias del proyecto.
+        </p>
+
+        <p>
+            <a     href="{{ route('proyectos.hitos.index', $proyecto) }}"
+                   class="btn btn-primary">
+                    Gestionar hitos
+                </a>
+
+            <a     href="{{ route('proyectos.avances.index', $proyecto) }}"
+                   class="btn btn-primary">
+                   Consultar avances
+                </a>
+
+            <a     href="{{ route('proyectos.incidencias.index', $proyecto) }}"
+                   class="btn btn-primary">
+                    Gestionar incidencias
+                </a>
+        </p>
+    @endif
+
 
     <hr>
 

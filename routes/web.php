@@ -5,6 +5,10 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\EvaluacionProyectoController;
 use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\ViabilidadController;
+use App\Http\Controllers\AprobacionController;
+use App\Http\Controllers\HitoController;
+use App\Http\Controllers\AvanceProyectoController;
+use App\Http\Controllers\IncidenciaController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -70,43 +74,111 @@ Route::middleware('auth')->group(function () {
         Route::get(
             '/proyectos/{proyecto}/editar',
             [ProyectoController::class, 'edit']
-        )->name('proyectos.edit');
+            )->name('proyectos.edit');
 
         Route::put(
             '/proyectos/{proyecto}',
             [ProyectoController::class, 'update']
-        )->name('proyectos.update');
+            )->name('proyectos.update');
 
         // HU-08: Evaluación de proyectos
         Route::get(
             '/proyectos/{proyecto}/evaluaciones',
             [EvaluacionProyectoController::class, 'index']
-        )->name('proyectos.evaluacion.index');
+            )->name('proyectos.evaluacion.index');
 
         Route::get(
             '/proyectos/{proyecto}/evaluacion/crear',
             [EvaluacionProyectoController::class, 'create']
-        )->name('proyectos.evaluacion.create');
+            )->name('proyectos.evaluacion.create');
 
         Route::post(
             '/proyectos/{proyecto}/evaluacion',
             [EvaluacionProyectoController::class, 'store']
-        )->name('proyectos.evaluacion.store');
-
-        Route::get('/proyectos/{proyecto}', [ProyectoController::class, 'show'])
-            ->name('proyectos.show');
+            )->name('proyectos.evaluacion.store');
 
         // HU-09 y HU-10: Viabilidad y ranking
         Route::get(
             '/ranking',
             [ViabilidadController::class, 'ranking']
-        )->name('viabilidad.ranking');
+            )->name('viabilidad.ranking');
 
         Route::post(
             '/viabilidad/calcular/{id}',
             [ViabilidadController::class, 'calcular']
-        )->name('viabilidad.calcular');
+            )->name('viabilidad.calcular');
     });
+
+        Route::get('/proyectos/{proyecto}', [ProyectoController::class, 'show'])
+            ->name('proyectos.show');
+
+        // HU-14: Registro y consulta de acuerdos
+        Route::get(
+            '/proyectos/{proyecto}/aprobaciones',
+            [AprobacionController::class, 'index']
+            )->name('proyectos.aprobaciones.index');
+
+        Route::get(
+            '/proyectos/{proyecto}/aprobaciones/crear',
+            [AprobacionController::class, 'create']
+            )->name('proyectos.aprobaciones.create');
+
+        Route::post(
+            '/proyectos/{proyecto}/aprobaciones',
+            [AprobacionController::class, 'store']
+            )->name('proyectos.aprobaciones.store');
+
+        
+        // HU-17: Gestión de hitos
+        Route::get('/proyectos/{proyecto}/hitos', [HitoController::class, 'index'])
+            ->name('proyectos.hitos.index');
+
+        Route::get('/proyectos/{proyecto}/hitos/crear', [HitoController::class, 'create'])
+            ->name('proyectos.hitos.create');
+
+        Route::post('/proyectos/{proyecto}/hitos', [HitoController::class, 'store'])
+            ->name('proyectos.hitos.store');
+
+        Route::get('/proyectos/{proyecto}/hitos/{hito}/editar', [HitoController::class, 'edit'])
+            ->name('proyectos.hitos.edit');
+
+        Route::put('/proyectos/{proyecto}/hitos/{hito}', [HitoController::class, 'update'])
+            ->name('proyectos.hitos.update');
+
+
+        // HU-17: Registro de avances
+        Route::get('/proyectos/{proyecto}/avances', [AvanceProyectoController::class, 'index'])
+            ->name('proyectos.avances.index');
+
+        Route::get('/proyectos/{proyecto}/avances/crear', [AvanceProyectoController::class, 'create'])
+            ->name('proyectos.avances.create');
+
+        Route::post('/proyectos/{proyecto}/avances', [AvanceProyectoController::class, 'store'])
+            ->name('proyectos.avances.store');
+
+        Route::get('/proyectos/{proyecto}/avances/{avance}/editar', [AvanceProyectoController::class, 'edit'])
+            ->name('proyectos.avances.edit');
+
+        Route::put('/proyectos/{proyecto}/avances/{avance}', [AvanceProyectoController::class, 'update'])
+            ->name('proyectos.avances.update');
+
+
+        // HU-17: Gestión de incidencias
+        Route::get('/proyectos/{proyecto}/incidencias', [IncidenciaController::class, 'index'])
+            ->name('proyectos.incidencias.index');
+
+        Route::get('/proyectos/{proyecto}/incidencias/crear', [IncidenciaController::class, 'create'])
+            ->name('proyectos.incidencias.create');
+
+        Route::post('/proyectos/{proyecto}/incidencias', [IncidenciaController::class, 'store'])
+            ->name('proyectos.incidencias.store');
+
+        Route::get('/proyectos/{proyecto}/incidencias/{incidencia}/editar', [IncidenciaController::class, 'edit'])
+            ->name('proyectos.incidencias.edit');
+
+        Route::put('/proyectos/{proyecto}/incidencias/{incidencia}', [IncidenciaController::class, 'update'])
+            ->name('proyectos.incidencias.update');
+
 });
 
 Route::get('/', function () {
