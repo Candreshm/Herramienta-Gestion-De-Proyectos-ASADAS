@@ -1,144 +1,136 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historial de evaluaciones</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 1000px;
-            margin: 30px auto;
-            padding: 20px;
-            background: #f4f7f6;
-            color: #263238;
-        }
+@extends('layouts.app')
 
-        .contenedor {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-        }
+@section('title', 'Historial de evaluaciones')
 
-        h1, h2 {
-            color: #245b45;
-        }
+@section('content')
 
-        .evaluacion {
-            border: 1px solid #d8e3dd;
-            padding: 18px;
-            margin: 18px 0;
-            border-radius: 8px;
-        }
+<div class="page-header">
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 12px;
-        }
+    <div>
+        <h2 class="page-title">
+            Historial de evaluaciones
+        </h2>
 
-        th, td {
-            border: 1px solid #d8e3dd;
-            padding: 10px;
-            text-align: left;
-        }
+        <p class="page-subtitle">
+            {{ $proyecto->codigo }} — {{ $proyecto->nombre }}
+        </p>
+    </div>
 
-        th {
-            background: #e9f1ec;
-        }
+    <div class="actions">
 
-        .boton {
-            display: inline-block;
-            background: #245b45;
-            color: white;
-            padding: 11px 16px;
-            border-radius: 5px;
-            text-decoration: none;
-            margin: 5px 5px 5px 0;
-        }
+        <a
+            href="{{ route('proyectos.evaluacion.create', $proyecto) }}"
+            class="btn btn-primary"
+        >
+            + Registrar evaluación
+        </a>
 
-        .mensaje {
-            background: #e7f4e9;
-            padding: 12px;
-            border-radius: 5px;
-            color: #205c32;
-        }
+        <a
+            href="{{ route('proyectos.show', $proyecto) }}"
+            class="btn btn-secondary"
+        >
+            Volver al proyecto
+        </a>
 
-        .vacio {
-            padding: 18px;
-            background: #f2f4f3;
-            border-radius: 5px;
-        }
-    </style>
-</head>
-<body>
-<div class="contenedor">
-    <h1>Historial de evaluaciones</h1>
+    </div>
 
-    <p>
-        <strong>Proyecto:</strong>
-        {{ $proyecto->codigo }} - {{ $proyecto->nombre }}
-    </p>
+</div>
 
-    @if (session('success'))
-        <p class="mensaje">{{ session('success') }}</p>
-    @endif
+<div class="card">
 
-    <a
-        class="boton"
-        href="{{ route('proyectos.evaluacion.create', $proyecto) }}"
-    >
-        Registrar evaluación
-    </a>
+    @forelse($evaluaciones as $evaluacion)
 
-    <a
-        class="boton"
-        href="{{ route('proyectos.show', $proyecto) }}"
-    >
-        Volver al proyecto
-    </a>
+        <div class="evaluation-card">
 
-    @forelse ($evaluaciones as $evaluacion)
-        <div class="evaluacion">
-            <h2>
-                Evaluación del
-                {{ $evaluacion->fecha_evaluacion->format('d/m/Y') }}
-            </h2>
+            <div class="evaluation-header">
 
-            <p>
-                <strong>Evaluador:</strong>
-                {{ $evaluacion->evaluador->name ?? 'No disponible' }}
-            </p>
+                <div>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Criterio</th>
-                        <th>Puntuación</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($evaluacion->criterios as $criterio)
+                    <h3 class="evaluation-title">
+                        Evaluación del
+                        {{ $evaluacion->fecha_evaluacion?->format('d/m/Y') }}
+                    </h3>
+
+                    <div class="evaluation-meta">
+                        Evaluador:
+                        {{ $evaluacion->evaluador?->name ?? 'No disponible' }}
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
                         <tr>
-                            <td>{{ $criterio->criterio }}</td>
-                            <td>{{ $criterio->puntuacion }} / 5</td>
+                            <th>Criterio</th>
+                            <th>Puntuación</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
 
-            @if ($evaluacion->observaciones)
-                <p>
-                    <strong>Observaciones:</strong>
-                    {{ $evaluacion->observaciones }}
-                </p>
+                    <tbody>
+
+                        @foreach($evaluacion->criterios as $criterio)
+
+                            <tr>
+
+                                <td>
+                                    {{ $criterio->criterio }}
+                                </td>
+
+                                <td>
+                                    <span class="score">
+                                        {{ $criterio->puntuacion }} / 5
+                                    </span>
+                                </td>
+
+                            </tr>
+
+                        @endforeach
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            @if($evaluacion->observaciones)
+
+                <div class="detail-field section-spacing">
+
+                    <span class="detail-label">
+                        Observaciones
+                    </span>
+
+                    <div class="detail-value">
+                        {{ $evaluacion->observaciones }}
+                    </div>
+
+                </div>
+
             @endif
+
         </div>
+
     @empty
-        <div class="vacio">
+
+        <div class="empty-state">
             Este proyecto todavía no tiene evaluaciones registradas.
         </div>
+
     @endforelse
+
+    @if($evaluaciones->hasPages())
+
+        <div class="section-spacing">
+            {{ $evaluaciones->links() }}
+        </div>
+
+    @endif
+
 </div>
-</body>
-</html>
+
+@endsection

@@ -1,75 +1,212 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Editar Usuario</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; max-width: 600px; }
-        label { display: block; margin-top: 12px; font-weight: bold; }
-        input, select { width: 100%; padding: 6px; margin-top: 4px; box-sizing: border-box; }
-        button, .btn { padding: 8px 15px; margin-top: 15px; border: none; border-radius: 3px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .btn-primary { background-color: #0066cc; color: white; }
-        .btn-secondary { background-color: #ccc; color: black; }
-        .errores { background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 3px; margin-bottom: 15px; }
-        .errores ul { margin: 5px 0; padding-left: 20px; }
-        .check { width: auto; display: inline; }
-        small { color: #666; }
-    </style>
-</head>
-<body>
+@extends('layouts.app')
 
-    <h1>Editar Usuario</h1>
+@section('title', 'Editar usuario')
 
-    <p><a href="{{ route('usuarios.index') }}">← Volver al listado</a></p>
+@section('content')
+
+<div class="page-header">
+
+    <div>
+
+        <h2 class="page-title">
+            Editar usuario
+        </h2>
+
+        <p class="page-subtitle">
+            {{ $user->name }} — {{ $user->email }}
+        </p>
+
+    </div>
+
+    <a
+        href="{{ route('usuarios.index') }}"
+        class="btn btn-secondary"
+    >
+        Volver al listado
+    </a>
+
+</div>
+
+<div class="card">
 
     @if($errors->any())
-        <div class="errores">
+
+        <div class="alert alert-error">
+
+            <strong>
+                Se encontraron los siguientes errores:
+            </strong>
+
             <ul>
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
             </ul>
+
         </div>
+
     @endif
 
-    <form action="{{ route('usuarios.update', $user) }}" method="POST">
+    <form
+        action="{{ route('usuarios.update', $user) }}"
+        method="POST"
+    >
         @csrf
         @method('PUT')
 
-        <label>Nombre completo *</label>
-        <input type="text" name="name" value="{{ old('name', $user->name) }}" required>
+        <div class="form-group">
 
-        <label>Correo electrónico *</label>
-        <input type="email" name="email" value="{{ old('email', $user->email) }}" required>
+            <label
+                for="name"
+                class="form-label"
+            >
+                Nombre completo
+                <span class="form-required">*</span>
+            </label>
 
-        <label>Nueva contraseña (opcional, mínimo 8 caracteres)</label>
-        <input type="password" name="password">
-        <small>Dejar en blanco para mantener la contraseña actual.</small>
+            <input
+                type="text"
+                id="name"
+                name="name"
+                value="{{ old('name', $user->name) }}"
+                required
+            >
 
-        <label>Confirmar nueva contraseña</label>
-        <input type="password" name="password_confirmation">
-
-        <label>Rol *</label>
-        <select name="role_id" required>
-            @foreach($roles as $role)
-                <option value="{{ $role->id }}" {{ old('role_id', $user->role_id) == $role->id ? 'selected' : '' }}>
-                    {{ $role->nombre }}
-                </option>
-            @endforeach
-        </select>
-
-        <label>
-            <input type="checkbox" name="activo" value="1" class="check"
-                   {{ old('activo', $user->activo) ? 'checked' : '' }}>
-            Usuario activo
-        </label>
-
-        <div>
-            <button type="submit" class="btn-primary">Guardar Cambios</button>
-            <a href="{{ route('usuarios.index') }}" class="btn btn-secondary">Cancelar</a>
         </div>
+
+        <div class="form-group">
+
+            <label
+                for="email"
+                class="form-label"
+            >
+                Correo electrónico
+                <span class="form-required">*</span>
+            </label>
+
+            <input
+                type="email"
+                id="email"
+                name="email"
+                value="{{ old('email', $user->email) }}"
+                required
+            >
+
+        </div>
+
+        <div class="form-grid">
+
+            <div class="form-group">
+
+                <label
+                    for="password"
+                    class="form-label"
+                >
+                    Nueva contraseña
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                >
+
+                <p class="form-help">
+                    Déjela en blanco para mantener la contraseña actual.
+                </p>
+
+            </div>
+
+            <div class="form-group">
+
+                <label
+                    for="password_confirmation"
+                    class="form-label"
+                >
+                    Confirmar nueva contraseña
+                </label>
+
+                <input
+                    type="password"
+                    id="password_confirmation"
+                    name="password_confirmation"
+                >
+
+            </div>
+
+        </div>
+
+        <div class="form-group">
+
+            <label
+                for="role_id"
+                class="form-label"
+            >
+                Rol
+                <span class="form-required">*</span>
+            </label>
+
+            <select
+                id="role_id"
+                name="role_id"
+                required
+            >
+
+                @foreach($roles as $role)
+
+                    <option
+                        value="{{ $role->id }}"
+                        {{ old('role_id', $user->role_id) == $role->id ? 'selected' : '' }}
+                    >
+                        {{ $role->nombre }}
+                    </option>
+
+                @endforeach
+
+            </select>
+
+        </div>
+
+        <div class="form-group">
+
+            <label class="checkbox-field">
+
+                <input
+                    type="checkbox"
+                    name="activo"
+                    value="1"
+                    {{ old('activo', $user->activo) ? 'checked' : '' }}
+                >
+
+                <span>
+                    Usuario activo
+                </span>
+
+            </label>
+
+        </div>
+
+        <div class="form-actions">
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Guardar cambios
+            </button>
+
+            <a
+                href="{{ route('usuarios.index') }}"
+                class="btn btn-secondary"
+            >
+                Cancelar
+            </a>
+
+        </div>
+
     </form>
 
-</body>
-</html>
+</div>
+
+@endsection
 

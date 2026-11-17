@@ -4,281 +4,298 @@
 
 @section('content')
 
-    <div style="
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        gap:20px;
-        flex-wrap:wrap;
-        margin-bottom:20px;
-    ">
-        <div>
-            <h2 class="page-title" style="margin-bottom:5px;">
-                Iniciativas de Proyecto
-            </h2>
+<div class="project-list-header">
 
-            <p style="margin:0; color:#64748b;">
-                Consulta, búsqueda y filtrado de iniciativas registradas.
-            </p>
-        </div>
+    <div>
+        <h2 class="page-title project-list-title">
+            Iniciativas de Proyecto
+        </h2>
 
-        <div class="actions">
-            <a
-                href="{{ route('dashboard') }}"
-                class="btn btn-secondary"
-            >
-                Volver al panel
-            </a>
-
-            <a
-                href="{{ route('proyectos.create') }}"
-                class="btn btn-primary"
-            >
-                + Nueva iniciativa
-            </a>
-        </div>
+        <p class="project-list-subtitle">
+            Consulta, búsqueda y filtrado de iniciativas registradas.
+        </p>
     </div>
 
-    <div class="card">
+    <div class="actions">
 
-        <form
-            method="GET"
-            action="{{ route('proyectos.index') }}"
-            style="
-                display:grid;
-                grid-template-columns:
-                    minmax(220px, 2fr)
-                    repeat(3, minmax(150px, 1fr))
-                    auto;
-                gap:15px;
-                align-items:end;
-                margin-bottom:25px;
-            "
+        <a
+            href="{{ route('dashboard') }}"
+            class="btn btn-secondary"
         >
+            Volver al panel
+        </a>
 
-            <div>
-                <label for="buscar">
-                    Buscar
-                </label>
+        <a
+            href="{{ route('proyectos.create') }}"
+            class="btn btn-primary"
+        >
+            + Nueva iniciativa
+        </a>
 
-                <input
-                    type="search"
-                    id="buscar"
-                    name="buscar"
-                    value="{{ request('buscar') }}"
-                    placeholder="Código o nombre"
-                >
-            </div>
+    </div>
 
-            <div>
-                <label for="estado">
-                    Estado
-                </label>
+</div>
 
-                <select
-                    name="estado"
-                    id="estado"
-                >
-                    <option value="">
-                        Todos
-                    </option>
+<div class="card">
 
-                    @foreach($estados as $estado)
-                        <option
-                            value="{{ $estado->id }}"
-                            {{ (string) request('estado') === (string) $estado->id ? 'selected' : '' }}
-                        >
-                            {{ $estado->nombre }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+    <form
+        method="GET"
+        action="{{ route('proyectos.index') }}"
+        class="project-filters"
+    >
 
-            <div>
-                <label for="criticidad">
-                    Criticidad
-                </label>
+        <div>
 
-                <select
-                    name="criticidad"
-                    id="criticidad"
-                >
-                    <option value="">
-                        Todas
-                    </option>
-
-                    <option
-                        value="Baja"
-                        {{ request('criticidad') === 'Baja' ? 'selected' : '' }}
-                    >
-                        Baja
-                    </option>
-
-                    <option
-                        value="Media"
-                        {{ request('criticidad') === 'Media' ? 'selected' : '' }}
-                    >
-                        Media
-                    </option>
-
-                    <option
-                        value="Alta"
-                        {{ request('criticidad') === 'Alta' ? 'selected' : '' }}
-                    >
-                        Alta
-                    </option>
-                </select>
-            </div>
-
-            <div>
-                <label for="prioridad">
-                    Prioridad
-                </label>
-
-                <select
-                    name="prioridad"
-                    id="prioridad"
-                >
-                    <option value="">
-                        Todas
-                    </option>
-
-                    <option
-                        value="Baja"
-                        {{ request('prioridad') === 'Baja' ? 'selected' : '' }}
-                    >
-                        Baja
-                    </option>
-
-                    <option
-                        value="Media"
-                        {{ request('prioridad') === 'Media' ? 'selected' : '' }}
-                    >
-                        Media
-                    </option>
-
-                    <option
-                        value="Alta"
-                        {{ request('prioridad') === 'Alta' ? 'selected' : '' }}
-                    >
-                        Alta
-                    </option>
-                </select>
-            </div>
-
-            <div
-                style="
-                    display:flex;
-                    gap:8px;
-                    flex-wrap:wrap;
-                "
+            <label
+                for="buscar"
+                class="form-label"
             >
-                <button
-                    type="submit"
-                    class="btn btn-primary"
+                Buscar
+            </label>
+
+            <input
+                type="search"
+                id="buscar"
+                name="buscar"
+                value="{{ request('buscar') }}"
+                placeholder="Código o nombre"
+            >
+
+        </div>
+
+        <div>
+
+            <label
+                for="estado"
+                class="form-label"
+            >
+                Estado
+            </label>
+
+            <select
+                name="estado"
+                id="estado"
+            >
+                <option value="">
+                    Todos
+                </option>
+
+                @foreach($estados as $estado)
+
+                    <option
+                        value="{{ $estado->id }}"
+                        {{ (string) request('estado') === (string) $estado->id ? 'selected' : '' }}
+                    >
+                        {{ $estado->nombre }}
+                    </option>
+
+                @endforeach
+
+            </select>
+
+        </div>
+
+        <div>
+
+            <label
+                for="criticidad"
+                class="form-label"
+            >
+                Criticidad
+            </label>
+
+            <select
+                name="criticidad"
+                id="criticidad"
+            >
+                <option value="">
+                    Todas
+                </option>
+
+                <option
+                    value="Baja"
+                    {{ request('criticidad') === 'Baja' ? 'selected' : '' }}
                 >
-                    Aplicar
-                </button>
+                    Baja
+                </option>
 
-                <a
-                    href="{{ route('proyectos.index') }}"
-                    class="btn btn-secondary"
+                <option
+                    value="Media"
+                    {{ request('criticidad') === 'Media' ? 'selected' : '' }}
                 >
-                    Limpiar
-                </a>
-            </div>
+                    Media
+                </option>
 
-        </form>
+                <option
+                    value="Alta"
+                    {{ request('criticidad') === 'Alta' ? 'selected' : '' }}
+                >
+                    Alta
+                </option>
 
-        <div
-            style="
-                overflow-x:auto;
-                border:1px solid #e5e7eb;
-                border-radius:8px;
-            "
-        >
-            <table>
-                <thead>
+            </select>
+
+        </div>
+
+        <div>
+
+            <label
+                for="prioridad"
+                class="form-label"
+            >
+                Prioridad
+            </label>
+
+            <select
+                name="prioridad"
+                id="prioridad"
+            >
+                <option value="">
+                    Todas
+                </option>
+
+                <option
+                    value="Baja"
+                    {{ request('prioridad') === 'Baja' ? 'selected' : '' }}
+                >
+                    Baja
+                </option>
+
+                <option
+                    value="Media"
+                    {{ request('prioridad') === 'Media' ? 'selected' : '' }}
+                >
+                    Media
+                </option>
+
+                <option
+                    value="Alta"
+                    {{ request('prioridad') === 'Alta' ? 'selected' : '' }}
+                >
+                    Alta
+                </option>
+
+            </select>
+
+        </div>
+
+        <div class="project-filter-actions">
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Aplicar
+            </button>
+
+            <a
+                href="{{ route('proyectos.index') }}"
+                class="btn btn-secondary"
+            >
+                Limpiar
+            </a>
+
+        </div>
+
+    </form>
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Estado</th>
+                    <th>Criticidad</th>
+                    <th>Prioridad</th>
+                    <th>Registrado por</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @forelse($proyectos as $proyecto)
+
                     <tr>
-                        <th>Código</th>
-                        <th>Nombre</th>
-                        <th>Estado</th>
-                        <th>Criticidad</th>
-                        <th>Prioridad</th>
-                        <th>Registrado por</th>
-                        <th>Fecha</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
 
-                <tbody>
-                    @forelse($proyectos as $proyecto)
+                        <td>
+                            {{ $proyecto->codigo }}
+                        </td>
 
-                        <tr>
-                            <td>
-                                {{ $proyecto->codigo }}
-                            </td>
+                        <td>
+                            {{ $proyecto->nombre }}
+                        </td>
 
-                            <td>
-                                {{ $proyecto->nombre }}
-                            </td>
+                        <td>
+                            <strong>
+                                {{ $proyecto->estado?->nombre ?? 'Sin estado' }}
+                            </strong>
+                        </td>
 
-                            <td>
-                                <strong>
-                                    {{ $proyecto->estado?->nombre ?? 'Sin estado' }}
-                                </strong>
-                            </td>
+                        <td>
+                            {{ $proyecto->criticidad ?? 'No definida' }}
+                        </td>
 
-                            <td>
-                                {{ $proyecto->criticidad ?? 'No definida' }}
-                            </td>
+                        <td>
+                            {{ $proyecto->prioridad ?? 'No definida' }}
+                        </td>
 
-                            <td>
-                                {{ $proyecto->prioridad ?? 'No definida' }}
-                            </td>
+                        <td>
+                            {{ $proyecto->creador?->name ?? 'Sin usuario' }}
+                        </td>
 
-                            <td>
-                                {{ $proyecto->creador?->name ?? 'Sin usuario' }}
-                            </td>
+                        <td>
+                            {{ $proyecto->created_at?->format('d/m/Y') }}
+                        </td>
 
-                            <td>
-                                {{ $proyecto->created_at?->format('d/m/Y') }}
-                            </td>
+                        <td>
 
-                            <td>
+                            <div class="table-actions">
+
                                 <a
                                     href="{{ route('proyectos.show', $proyecto) }}"
                                     class="btn btn-primary"
                                 >
                                     Ver
                                 </a>
-                            </td>
-                        </tr>
 
-                    @empty
+                            </div>
 
-                        <tr>
-                            <td
-                                colspan="8"
-                                style="
-                                    text-align:center;
-                                    padding:30px;
-                                    color:#64748b;
-                                "
-                            >
-                                No se encontraron iniciativas con los criterios seleccionados.
-                            </td>
-                        </tr>
+                        </td>
 
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                    </tr>
 
-        <div style="margin-top:20px;">
+                @empty
+
+                    <tr>
+                        <td
+                            colspan="8"
+                            class="empty-state"
+                        >
+                            No se encontraron iniciativas con los criterios seleccionados.
+                        </td>
+                    </tr>
+
+                @endforelse
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    @if($proyectos->hasPages())
+
+        <div class="pagination-wrapper">
             {{ $proyectos->links() }}
         </div>
 
-    </div>
+    @endif
+
+</div>
 
 @endsection

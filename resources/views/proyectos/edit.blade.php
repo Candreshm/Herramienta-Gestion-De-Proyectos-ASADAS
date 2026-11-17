@@ -1,26 +1,48 @@
 @extends('layouts.app')
 
+@section('title', 'Editar proyecto')
+
 @section('content')
-<div class="container">
-    <h1>Editar proyecto</h1>
 
-    <p>Modificá los datos generales de la iniciativa registrada.</p>
+<div class="page-header">
 
-    @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
+    <div>
+        <h2 class="page-title">
+            Editar proyecto
+        </h2>
 
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <strong>Revisá los siguientes campos:</strong>
+        <p class="page-subtitle">
+            {{ $proyecto->codigo }} — {{ $proyecto->nombre }}
+        </p>
+    </div>
+
+    <a
+        href="{{ route('proyectos.show', $proyecto) }}"
+        class="btn btn-secondary"
+    >
+        Volver al proyecto
+    </a>
+
+</div>
+
+<div class="card">
+
+    @if($errors->any())
+
+        <div class="alert alert-error">
+
+            <strong>
+                Revise los siguientes campos:
+            </strong>
+
             <ul>
-                @foreach ($errors->all() as $error)
+                @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
             </ul>
+
         </div>
+
     @endif
 
     <form
@@ -30,64 +52,104 @@
         @csrf
         @method('PUT')
 
-        <div class="mb-3">
-            <label for="codigo" class="form-label">Código</label>
+        <div class="form-group">
+
+            <label
+                for="codigo"
+                class="form-label"
+            >
+                Código
+                <span class="form-required">*</span>
+            </label>
+
             <input
                 type="text"
                 name="codigo"
                 id="codigo"
-                class="form-control"
                 value="{{ old('codigo', $proyecto->codigo) }}"
                 maxlength="50"
                 required
             >
+
         </div>
 
-        <div class="mb-3">
-            <label for="nombre" class="form-label">Nombre del proyecto</label>
+        <div class="form-group">
+
+            <label
+                for="nombre"
+                class="form-label"
+            >
+                Nombre del proyecto
+                <span class="form-required">*</span>
+            </label>
+
             <input
                 type="text"
                 name="nombre"
                 id="nombre"
-                class="form-control"
                 value="{{ old('nombre', $proyecto->nombre) }}"
                 maxlength="255"
                 required
             >
+
         </div>
 
-        <div class="mb-3">
-            <label for="descripcion" class="form-label">Descripción</label>
+        <div class="form-group">
+
+            <label
+                for="descripcion"
+                class="form-label"
+            >
+                Descripción
+                <span class="form-required">*</span>
+            </label>
+
             <textarea
                 name="descripcion"
                 id="descripcion"
-                class="form-control"
-                rows="4"
                 required
             >{{ old('descripcion', $proyecto->descripcion) }}</textarea>
+
         </div>
 
-        <div class="mb-3">
-            <label for="objetivo" class="form-label">Objetivo</label>
+        <div class="form-group">
+
+            <label
+                for="objetivo"
+                class="form-label"
+            >
+                Objetivo
+                <span class="form-required">*</span>
+            </label>
+
             <textarea
                 name="objetivo"
                 id="objetivo"
-                class="form-control"
-                rows="4"
                 required
             >{{ old('objetivo', $proyecto->objetivo) }}</textarea>
+
         </div>
 
-        <button type="submit" class="btn btn-primary">
-            Guardar cambios
-        </button>
+        <div class="form-actions">
 
-        <a
-            href="{{ route('proyectos.show', $proyecto) }}"
-            class="btn btn-secondary"
-        >
-            Cancelar
-        </a>
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Guardar cambios
+            </button>
+
+            <a
+                href="{{ route('proyectos.show', $proyecto) }}"
+                class="btn btn-secondary"
+            >
+                Cancelar
+            </a>
+
+        </div>
+
     </form>
+
 </div>
+
 @endsection
