@@ -8,54 +8,48 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (! Schema::hasTable('validaciones_presupuestarias')) {
+            return;
+        }
+
         Schema::table('validaciones_presupuestarias', function (Blueprint $table) {
+            if (! Schema::hasColumn('validaciones_presupuestarias', 'proyecto_id')) {
+                $table->foreignId('proyecto_id')
+                    ->after('id')
+                    ->constrained('proyectos')
+                    ->cascadeOnDelete();
+            }
 
-            $table->foreignId('proyecto_id')
-                ->after('id')
-                ->constrained('proyectos')
-                ->cascadeOnDelete();
+            if (! Schema::hasColumn('validaciones_presupuestarias', 'monto_disponible')) {
+                $table->decimal('monto_disponible', 14, 2)
+                    ->default(0)
+                    ->after('proyecto_id');
+            }
 
-            $table->decimal('monto_disponible', 14, 2)
-                ->default(0)
-                ->after('proyecto_id');
+            if (! Schema::hasColumn('validaciones_presupuestarias', 'fecha_validacion')) {
+                $table->date('fecha_validacion')
+                    ->after('monto_disponible');
+            }
 
-            $table->date('fecha_validacion')
-                ->after('monto_disponible');
+            if (! Schema::hasColumn('validaciones_presupuestarias', 'observaciones')) {
+                $table->text('observaciones')
+                    ->nullable()
+                    ->after('fecha_validacion');
+            }
 
-            $table->text('observaciones')
-                ->nullable()
-                ->after('fecha_validacion');
-
-            $table->foreignId('validado_por_id')
-                ->after('observaciones')
-                ->constrained('users')
-                ->restrictOnDelete();
-
-            $table->unique('proyecto_id');
+            if (! Schema::hasColumn('validaciones_presupuestarias', 'validado_por_id')) {
+                $table->foreignId('validado_por_id')
+                    ->after('observaciones')
+                    ->constrained('users')
+                    ->restrictOnDelete();
+            }
         });
     }
 
     public function down(): void
     {
-        Schema::table('validaciones_presupuestarias', function (Blueprint $table) {
-
-            $table->dropUnique([
-                'proyecto_id'
-            ]);
-
-            $table->dropConstrainedForeignId(
-                'validado_por_id'
-            );
-
-            $table->dropConstrainedForeignId(
-                'proyecto_id'
-            );
-
-            $table->dropColumn([
-                'monto_disponible',
-                'fecha_validacion',
-                'observaciones',
-            ]);
-        });
+        // Migración correctiva histórica.
+        // No se revierte para evitar eliminar columnas
+        // creadas originalmente por la migración base.
     }
 };
