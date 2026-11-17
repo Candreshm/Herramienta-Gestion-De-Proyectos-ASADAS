@@ -16,33 +16,51 @@ use Illuminate\View\View;
 class ProyectoController extends Controller
 {
     public function index(Request $request): View
-    {
-        $query = Proyecto::with(['estado', 'creador']);
+{
+    $query = Proyecto::with(['estado', 'creador']);
 
-        if ($request->filled('estado')) {
-            $query->where('estado_proyecto_id', $request->estado);
-        }
+    if ($request->filled('buscar')) {
+        $buscar = trim($request->buscar);
 
-        if ($request->filled('criticidad')) {
-            $query->where('criticidad', $request->criticidad);
-        }
+        $query->where(function ($q) use ($buscar) {
+            $q->where('codigo', 'like', "%{$buscar}%")
+                ->orWhere('nombre', 'like', "%{$buscar}%");
+        });
+    }
 
-        if ($request->filled('prioridad')) {
-            $query->where('prioridad', $request->prioridad);
-        }
-
-        $proyectos = $query
-            ->latest()
-            ->get();
-
-        $estados = EstadoProyecto::orderBy('nombre')->get();
-
-        return view(
-            'proyectos.index',
-            compact('proyectos', 'estados')
+    if ($request->filled('estado')) {
+        $query->where(
+            'estado_proyecto_id',
+            $request->estado
         );
     }
 
+    if ($request->filled('criticidad')) {
+        $query->where(
+            'criticidad',
+            $request->criticidad
+        );
+    }
+
+    if ($request->filled('prioridad')) {
+        $query->where(
+            'prioridad',
+            $request->prioridad
+        );
+    }
+
+    $proyectos = $query
+        ->latest()
+        ->paginate(10)
+        ->withQueryString();
+
+    $estados = EstadoProyecto::orderBy('nombre')->get();
+
+    return view(
+        'proyectos.index',
+        compact('proyectos', 'estados')
+    );
+}
     public function create(): View
     {
         return view('proyectos.create');
