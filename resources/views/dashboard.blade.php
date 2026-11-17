@@ -34,6 +34,13 @@
                 Gestión de usuarios
             </a>
 
+            <a
+                href="{{ route('modelo-viabilidad.edit') }}"
+                class="btn btn-primary"
+            >
+                Modelo de viabilidad
+            </a>
+
         @endif
 
         <a
