@@ -7,17 +7,27 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::rename(
-            'validacion_presupuestarias',
-            'validaciones_presupuestarias'
-        );
+        if (
+            Schema::hasTable('validacion_presupuestarias') &&
+            !Schema::hasTable('validaciones_presupuestarias')
+        ) {
+            Schema::rename(
+                'validacion_presupuestarias',
+                'validaciones_presupuestarias'
+            );
+        }
     }
 
     public function down(): void
     {
-        Schema::rename(
-            'validaciones_presupuestarias',
-            'validacion_presupuestarias'
-        );
+        if (
+            Schema::hasTable('validaciones_presupuestarias') &&
+            !Schema::hasTable('validacion_presupuestarias')
+        ) {
+            Schema::rename(
+                'validaciones_presupuestarias',
+                'validacion_presupuestarias'
+            );
+        }
     }
 };
