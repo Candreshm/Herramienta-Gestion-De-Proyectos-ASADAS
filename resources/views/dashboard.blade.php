@@ -1,59 +1,54 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Panel principal</title>
-</head>
+@extends('layouts.app')
 
-<body>
+@section('title', 'Panel principal')
 
-    <h1>Panel principal</h1>
+@section('content')
 
-    <p>
-        Bienvenido, {{ auth()->user()->name }}
-    </p>
+    <h2 class="page-title">
+        Panel principal
+    </h2>
 
-    <p>
-        Rol:
-        {{ auth()->user()->role->nombre ?? 'Sin rol' }}
-    </p>
+    <div class="card">
 
-    @if(auth()->user()->role?->nombre === 'Administrador')
         <p>
-            <a href="{{ route('usuarios.index') }}">Gestión de Usuarios</a>
+            Bienvenido,
+            <strong>{{ auth()->user()->name }}</strong>
         </p>
-    @endif
 
-    <form method="POST" action="{{ route('logout') }}">
-        @csrf
+        <p>
+            Rol:
+            <strong>
+                {{ auth()->user()->role->nombre ?? 'Sin rol' }}
+            </strong>
+        </p>
 
-        <button type="submit">
-            Cerrar sesión
-        </button>
-    </form>
+        <div class="actions">
 
-    <h2>Gestión de proyectos</h2>
+            @if(auth()->user()->role?->nombre === 'Administrador')
+                <a
+                    href="{{ route('usuarios.index') }}"
+                    class="btn btn-primary"
+                >
+                    Gestión de usuarios
+                </a>
+            @endif
 
-<a href="{{ route('proyectos.index') }}"
-   style="display:inline-block;
-          padding:10px 15px;
-          background:#007bff;
-          color:white;
-          text-decoration:none;
-          border-radius:5px;">
-    Ver iniciativas
-</a>
+            <a
+                href="{{ route('proyectos.index') }}"
+                class="btn btn-primary"
+            >
+                Ver iniciativas
+            </a>
 
-<a href="{{ route('proyectos.create') }}"
-   style="display:inline-block;
-          padding:10px 15px;
-          background:#28a745;
-          color:white;
-          text-decoration:none;
-          border-radius:5px;
-          margin-left:10px;">
-    Registrar iniciativa
-</a>
+            <a
+                href="{{ route('proyectos.create') }}"
+                class="btn btn-success"
+            >
+                Registrar iniciativa
+            </a>
 
-</body>
-</html>
+        </div>
+
+    </div>
+
+@endsection
