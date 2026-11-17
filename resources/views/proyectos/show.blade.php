@@ -202,6 +202,54 @@
         </a>
 
         <a
+            href="{{ route(
+                'presupuesto.validacion.edit',
+                $proyecto
+            ) }}"
+            class="btn btn-primary"
+        >
+            Validar presupuesto
+        </a>
+
+        <a
+    href="{{ route(
+        'proyectos.aprobacion.edit',
+        $proyecto
+    ) }}"
+    class="btn btn-warning"
+>
+    Aprobar / rechazar
+</a>
+<a
+    href="{{ route(
+        'proyectos.tareas.index',
+        $proyecto
+    ) }}"
+    class="btn btn-primary"
+>
+    Tablero de tareas
+</a>
+
+<a
+    href="{{ route(
+        'proyectos.seguimiento.index',
+        $proyecto
+    ) }}"
+    class="btn btn-primary"
+>
+    Seguimiento
+</a>
+
+<a
+    href="{{ route(
+        'proyectos.documentos.index',
+        $proyecto
+    ) }}"
+    class="btn btn-primary"
+>
+    Expediente documental
+</a>
+        <a
             href="{{ route('proyectos.evaluacion.index', $proyecto) }}"
             class="btn btn-secondary"
         >

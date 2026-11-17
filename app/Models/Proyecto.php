@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
 
 class Proyecto extends Model
 {
@@ -50,11 +52,16 @@ class Proyecto extends Model
         );
     }
 
-    public function evaluacion()
-    {
-        return $this->hasOne(EvaluacionProyecto::class, 'proyecto_id');
-    }
-
+public function evaluacion()
+{
+    return $this->hasOne(
+        EvaluacionProyecto::class,
+        'proyecto_id'
+    )->ofMany([
+        'fecha_evaluacion' => 'max',
+        'id' => 'max',
+    ]);
+}
     public function evidencias(): HasMany
     {
         return $this->hasMany(
@@ -71,4 +78,57 @@ class Proyecto extends Model
         );
     }
 
+    public function validacionPresupuestaria(): HasOne
+{
+    return $this->hasOne(
+        ValidacionPresupuestaria::class,
+        'proyecto_id'
+    );
+}
+
+public function aprobacion(): HasOne
+{
+    return $this->hasOne(
+        AprobacionProyecto::class,
+        'proyecto_id'
+    );
+}
+
+public function tareas(): HasMany
+{
+    return $this->hasMany(
+        TareaProyecto::class,
+        'proyecto_id'
+    );
+}
+public function hitos(): HasMany
+{
+    return $this->hasMany(
+        HitoProyecto::class,
+        'proyecto_id'
+    );
+}
+
+public function avances(): HasMany
+{
+    return $this->hasMany(
+        AvanceProyecto::class,
+        'proyecto_id'
+    );
+}
+
+public function incidencias(): HasMany
+{
+    return $this->hasMany(
+        IncidenciaProyecto::class,
+        'proyecto_id'
+    );
+}
+public function documentos(): HasMany
+{
+    return $this->hasMany(
+        DocumentoProyecto::class,
+        'proyecto_id'
+    );
+}
 }
