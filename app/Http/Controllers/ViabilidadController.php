@@ -9,24 +9,44 @@ use Illuminate\Http\Request;
 class ViabilidadController extends Controller
 {
     // HU-10: Ranking y priorización
-    public function ranking()
-    {
-        // Trae los proyectos que ya tienen evaluacion y los ordena del mejor al peor por el puntuaje
-        $proyectos = Proyecto::whereHas('evaluacion')
-            ->with('evaluacion')
-            ->get()
-            ->sortByDesc(function($proyecto) {
-                return $proyecto->evaluacion->puntaje_total;
-            });
+    public function ranking(Request $request)
+{
+    $query = Proyecto::whereHas('evaluacion')
+        ->with('evaluacion');
 
-        // Si no hay manda un mensaje
-        if ($proyectos->isEmpty()) {
-            return view('viabilidad.ranking', ['proyectos' => $proyectos, 'mensaje' => 'No hay datos suficientes para generar la priorización.']);
-        }
+    if ($request->filled('buscar')) {
+        $buscar = trim($request->buscar);
 
-        return view('viabilidad.ranking', compact('proyectos'));
+        $query->where(function ($q) use ($buscar) {
+            $q->where('codigo', 'like', "%{$buscar}%")
+                ->orWhere('nombre', 'like', "%{$buscar}%");
+        });
     }
 
+    if ($request->filled('dictamen')) {
+        $query->whereHas('evaluacion', function ($q) use ($request) {
+            $q->where('dictamen', $request->dictamen);
+        });
+    }
+
+    $query->orderByDesc(
+        EvaluacionProyecto::select('puntaje_total')
+            ->whereColumn(
+                'evaluaciones_proyecto.proyecto_id',
+                'proyectos.id'
+            )
+            ->limit(1)
+    );
+
+    $proyectos = $query
+        ->paginate(10)
+        ->withQueryString();
+
+    return view(
+        'viabilidad.ranking',
+        compact('proyectos')
+    );
+}
     // Calcular viabilidad
     public function calcular($id)
     {

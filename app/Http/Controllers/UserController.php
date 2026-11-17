@@ -9,15 +9,49 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
+
 
 class UserController extends Controller
 {
-    public function index(): View
-    {
-        $users = User::with('role')->orderBy('name')->paginate(10);
+    public function index(Request $request): View
+{
+    $query = User::with('role');
 
-        return view('users.index', compact('users'));
+    if ($request->filled('buscar')) {
+        $buscar = trim($request->buscar);
+
+        $query->where(function ($q) use ($buscar) {
+            $q->where('name', 'like', "%{$buscar}%")
+                ->orWhere('email', 'like', "%{$buscar}%");
+        });
     }
+
+    if ($request->filled('role_id')) {
+        $query->where('role_id', $request->role_id);
+    }
+
+    if ($request->filled('estado')) {
+        $query->where(
+            'activo',
+            $request->estado === 'activo'
+        );
+    }
+
+    $users = $query
+        ->orderBy('name')
+        ->paginate(10)
+        ->withQueryString();
+
+    $roles = Role::where('activo', true)
+        ->orderBy('nombre')
+        ->get();
+
+    return view(
+        'users.index',
+        compact('users', 'roles')
+    );
+}
 
     public function create(): View
     {

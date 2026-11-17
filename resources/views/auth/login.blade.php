@@ -4,15 +4,14 @@
 
 @section('content')
 
-<div
-    class="card"
-    style="max-width: 500px; margin: 60px auto;"
->
+<div class="card auth-card">
+
     <h2 class="page-title">
         Inicio de sesión
     </h2>
 
     @if ($errors->any())
+
         <div class="alert alert-error">
             <ul>
                 @foreach ($errors->all() as $error)
@@ -20,6 +19,7 @@
                 @endforeach
             </ul>
         </div>
+
     @endif
 
     <form
@@ -28,8 +28,12 @@
     >
         @csrf
 
-        <div style="margin-bottom: 18px;">
-            <label for="email">
+        <div class="form-group-spacing">
+
+            <label
+                for="email"
+                class="form-label"
+            >
                 Correo electrónico
             </label>
 
@@ -41,10 +45,15 @@
                 required
                 autofocus
             >
+
         </div>
 
-        <div style="margin-bottom: 18px;">
-            <label for="password">
+        <div class="form-group-spacing">
+
+            <label
+                for="password"
+                class="form-label"
+            >
                 Contraseña
             </label>
 
@@ -54,6 +63,7 @@
                 name="password"
                 required
             >
+
         </div>
 
         <button
@@ -64,6 +74,7 @@
         </button>
 
     </form>
+
 </div>
 
 @endsection

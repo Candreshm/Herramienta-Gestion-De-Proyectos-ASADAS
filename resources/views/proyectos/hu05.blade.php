@@ -1,116 +1,36 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Completar información - {{ $proyecto->nombre }}</title>
+@extends('layouts.app')
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f5f5f5;
-        }
+@section('title', 'Información complementaria')
 
-        .contenedor {
-            max-width: 800px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-        }
+@section('content')
 
-        h1 {
-            margin-bottom: 10px;
-        }
+<div class="page-header">
+    <div>
+        <h2 class="page-title">
+            Información complementaria
+        </h2>
 
-        .descripcion {
-            color: #555;
-            margin-bottom: 25px;
-        }
+        <p class="page-subtitle">
+            {{ $proyecto->codigo }} — {{ $proyecto->nombre }}
+        </p>
+    </div>
 
-        label {
-            display: block;
-            font-weight: bold;
-            margin-top: 18px;
-            margin-bottom: 6px;
-        }
+    <a
+        href="{{ route('proyectos.show', $proyecto) }}"
+        class="btn btn-secondary"
+    >
+        Volver al proyecto
+    </a>
+</div>
 
-        input,
-        textarea,
-        select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
+<div class="card">
 
-        textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        .fila {
-            display: flex;
-            gap: 20px;
-        }
-
-        .campo {
-            flex: 1;
-        }
-
-        .errores {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-
-        .botones {
-            margin-top: 25px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 10px 15px;
-            border-radius: 5px;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .btn-guardar {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .btn-cancelar {
-            background-color: #6c757d;
-            color: white;
-            margin-left: 10px;
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="contenedor">
-
-    <h1>Completar información de la iniciativa</h1>
-
-    <p class="descripcion">
-        Proyecto:
-        <strong>{{ $proyecto->codigo }} - {{ $proyecto->nombre }}</strong>
-    </p>
-
-    @if ($errors->any())
-        <div class="errores">
+    @if($errors->any())
+        <div class="alert alert-error">
             <strong>Se encontraron los siguientes errores:</strong>
 
             <ul>
-                @foreach ($errors->all() as $error)
+                @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
             </ul>
@@ -125,47 +45,62 @@
         @csrf
         @method('PUT')
 
-        <label for="justificacion">
-            Justificación
-        </label>
+        <div class="form-group">
+            <label
+                for="justificacion"
+                class="form-label"
+            >
+                Justificación
+            </label>
 
-        <textarea
-            id="justificacion"
-            name="justificacion"
-            required
-        >{{ old('justificacion', $proyecto->justificacion) }}</textarea>
+            <textarea
+                id="justificacion"
+                name="justificacion"
+                required
+            >{{ old('justificacion', $proyecto->justificacion) }}</textarea>
+        </div>
 
+        <div class="form-group">
+            <label
+                for="costo_estimado"
+                class="form-label"
+            >
+                Costo estimado
+            </label>
 
-        <label for="costo_estimado">
-            Costo estimado
-        </label>
+            <input
+                type="number"
+                id="costo_estimado"
+                name="costo_estimado"
+                value="{{ old('costo_estimado', $proyecto->costo_estimado) }}"
+                min="0"
+                step="0.01"
+                required
+            >
+        </div>
 
-        <input
-            type="number"
-            id="costo_estimado"
-            name="costo_estimado"
-            value="{{ old('costo_estimado', $proyecto->costo_estimado) }}"
-            min="0"
-            step="0.01"
-            required
-        >
+        <div class="form-group">
+            <label
+                for="impacto_esperado"
+                class="form-label"
+            >
+                Impacto esperado
+            </label>
 
+            <textarea
+                id="impacto_esperado"
+                name="impacto_esperado"
+                required
+            >{{ old('impacto_esperado', $proyecto->impacto_esperado) }}</textarea>
+        </div>
 
-        <label for="impacto_esperado">
-            Impacto esperado
-        </label>
+        <div class="form-grid">
 
-        <textarea
-            id="impacto_esperado"
-            name="impacto_esperado"
-            required
-        >{{ old('impacto_esperado', $proyecto->impacto_esperado) }}</textarea>
-
-
-        <div class="fila">
-
-            <div class="campo">
-                <label for="nivel_riesgo">
+            <div class="form-group">
+                <label
+                    for="nivel_riesgo"
+                    class="form-label"
+                >
                     Nivel de riesgo
                 </label>
 
@@ -176,32 +111,22 @@
                 >
                     <option value="">Seleccione...</option>
 
-                    <option
-                        value="Bajo"
-                        {{ old('nivel_riesgo', $proyecto->nivel_riesgo) === 'Bajo' ? 'selected' : '' }}
-                    >
-                        Bajo
-                    </option>
-
-                    <option
-                        value="Medio"
-                        {{ old('nivel_riesgo', $proyecto->nivel_riesgo) === 'Medio' ? 'selected' : '' }}
-                    >
-                        Medio
-                    </option>
-
-                    <option
-                        value="Alto"
-                        {{ old('nivel_riesgo', $proyecto->nivel_riesgo) === 'Alto' ? 'selected' : '' }}
-                    >
-                        Alto
-                    </option>
+                    @foreach(['Bajo', 'Medio', 'Alto'] as $valor)
+                        <option
+                            value="{{ $valor }}"
+                            {{ old('nivel_riesgo', $proyecto->nivel_riesgo) === $valor ? 'selected' : '' }}
+                        >
+                            {{ $valor }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
 
-
-            <div class="campo">
-                <label for="criticidad">
+            <div class="form-group">
+                <label
+                    for="criticidad"
+                    class="form-label"
+                >
                     Criticidad
                 </label>
 
@@ -212,101 +137,82 @@
                 >
                     <option value="">Seleccione...</option>
 
-                    <option
-                        value="Baja"
-                        {{ old('criticidad', $proyecto->criticidad) === 'Baja' ? 'selected' : '' }}
-                    >
-                        Baja
-                    </option>
-
-                    <option
-                        value="Media"
-                        {{ old('criticidad', $proyecto->criticidad) === 'Media' ? 'selected' : '' }}
-                    >
-                        Media
-                    </option>
-
-                    <option
-                        value="Alta"
-                        {{ old('criticidad', $proyecto->criticidad) === 'Alta' ? 'selected' : '' }}
-                    >
-                        Alta
-                    </option>
+                    @foreach(['Baja', 'Media', 'Alta'] as $valor)
+                        <option
+                            value="{{ $valor }}"
+                            {{ old('criticidad', $proyecto->criticidad) === $valor ? 'selected' : '' }}
+                        >
+                            {{ $valor }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
 
         </div>
 
-
-        <label for="prioridad">
-            Prioridad
-        </label>
-
-        <select
-            id="prioridad"
-            name="prioridad"
-            required
-        >
-            <option value="">Seleccione...</option>
-
-            <option
-                value="Baja"
-                {{ old('prioridad', $proyecto->prioridad) === 'Baja' ? 'selected' : '' }}
+        <div class="form-group">
+            <label
+                for="prioridad"
+                class="form-label"
             >
-                Baja
-            </option>
+                Prioridad
+            </label>
 
-            <option
-                value="Media"
-                {{ old('prioridad', $proyecto->prioridad) === 'Media' ? 'selected' : '' }}
+            <select
+                id="prioridad"
+                name="prioridad"
+                required
             >
-                Media
-            </option>
+                <option value="">Seleccione...</option>
 
-            <option
-                value="Alta"
-                {{ old('prioridad', $proyecto->prioridad) === 'Alta' ? 'selected' : '' }}
-            >
-                Alta
-            </option>
+                @foreach(['Baja', 'Media', 'Alta'] as $valor)
+                    <option
+                        value="{{ $valor }}"
+                        {{ old('prioridad', $proyecto->prioridad) === $valor ? 'selected' : '' }}
+                    >
+                        {{ $valor }}
+                    </option>
+                @endforeach
             </select>
+        </div>
 
-            <label for="evidencia">
-            Evidencia inicial
+        <div class="form-group">
+            <label
+                for="evidencia"
+                class="form-label"
+            >
+                Evidencia inicial
             </label>
 
             <input
-            type="file"
-            id="evidencia"
-            name="evidencia"
+                type="file"
+                id="evidencia"
+                name="evidencia"
             >
 
-            <p style="color:#666; font-size:13px;">
-            Puede adjuntar un archivo de evidencia de hasta 10 MB.
-    </p>
+            <p class="form-help">
+                Puede adjuntar un archivo de evidencia de hasta 10 MB.
+            </p>
+        </div>
 
-
-        <div class="botones">
-
+        <div class="form-actions">
             <button
                 type="submit"
-                class="btn btn-guardar"
+                class="btn btn-success"
             >
                 Guardar información
             </button>
 
             <a
                 href="{{ route('proyectos.show', $proyecto) }}"
-                class="btn btn-cancelar"
+                class="btn btn-secondary"
             >
                 Cancelar
             </a>
-
         </div>
 
     </form>
 
 </div>
 
-</body>
-</html>
+@endsection
