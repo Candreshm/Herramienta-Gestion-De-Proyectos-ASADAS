@@ -6,6 +6,7 @@ use App\Http\Controllers\EvaluacionProyectoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\ModeloViabilidadController;
+use App\Http\Controllers\TareaController;
 
 Route::middleware('guest')->group(function () {
 
@@ -100,6 +101,28 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/proyectos/{proyecto}', [ProyectoController::class, 'show'])
             ->name('proyectos.show');
+
+        // HU-15: Gestión de tareas
+        Route::get('/proyectos/{proyecto}/tareas', [TareaController::class, 'index'])
+            ->name('tareas.index');
+
+        Route::get('/proyectos/{proyecto}/tareas/crear', [TareaController::class, 'create'])
+            ->name('tareas.create');
+
+        Route::post('/proyectos/{proyecto}/tareas', [TareaController::class, 'store'])
+            ->name('tareas.store');
+
+        Route::get('/proyectos/{proyecto}/tareas/{tarea}/editar', [TareaController::class, 'edit'])
+            ->name('tareas.edit');
+
+        Route::put('/proyectos/{proyecto}/tareas/{tarea}', [TareaController::class, 'update'])
+            ->name('tareas.update');
+
+        Route::delete('/proyectos/{proyecto}/tareas/{tarea}', [TareaController::class, 'destroy'])
+            ->name('tareas.destroy');
+
+        Route::post('/proyectos/{proyecto}/tareas/{tarea}/estado', [TareaController::class, 'updateEstado'])
+            ->name('tareas.updateEstado');
 
     });
 });

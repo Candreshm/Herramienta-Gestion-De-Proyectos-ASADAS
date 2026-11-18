@@ -72,4 +72,12 @@ class Proyecto extends Model
         );
     }
 
+    public function tareas(): HasMany
+    {
+        return $this->hasMany(
+            Tarea::class,
+            'proyecto_id'
+        );
+    }
+
 }
