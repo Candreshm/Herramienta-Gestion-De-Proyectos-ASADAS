@@ -4,51 +4,68 @@
 
 @section('content')
 
-    <h2 class="page-title">
-        Panel principal
-    </h2>
+<div class="page-header">
+    <div>
+        <h2 class="page-title">
+            Panel principal
+        </h2>
 
-    <div class="card">
-
-        <p>
-            Bienvenido,
-            <strong>{{ auth()->user()->name }}</strong>
+        <p class="page-subtitle">
+            Bienvenido, {{ auth()->user()->name }}.
+            Rol: {{ auth()->user()->role?->nombre ?? 'Sin rol' }}.
         </p>
+    </div>
+</div>
 
-        <p>
-            Rol:
-            <strong>
-                {{ auth()->user()->role->nombre ?? 'Sin rol' }}
-            </strong>
-        </p>
+<div class="card">
 
-        <div class="actions">
+    <h3 class="section-title">
+        Gestión del sistema
+    </h3>
 
-            @if(auth()->user()->role?->nombre === 'Administrador')
-                <a
-                    href="{{ route('usuarios.index') }}"
-                    class="btn btn-primary"
-                >
-                    Gestión de usuarios
-                </a>
-            @endif
+    <div class="actions">
+
+        @if(auth()->user()->role?->nombre === 'Administrador')
 
             <a
-                href="{{ route('proyectos.index') }}"
+                href="{{ route('usuarios.index') }}"
                 class="btn btn-primary"
             >
-                Ver iniciativas
+                Gestión de usuarios
             </a>
 
             <a
-                href="{{ route('proyectos.create') }}"
-                class="btn btn-success"
+                href="{{ route('modelo-viabilidad.edit') }}"
+                class="btn btn-primary"
             >
-                Registrar iniciativa
+                Modelo de viabilidad
             </a>
 
-        </div>
+        @endif
+
+        <a
+            href="{{ route('proyectos.index') }}"
+            class="btn btn-primary"
+        >
+            Ver iniciativas
+        </a>
+
+        <a
+            href="{{ route('proyectos.create') }}"
+            class="btn btn-success"
+        >
+            Registrar iniciativa
+        </a>
+
+        <a
+            href="{{ route('viabilidad.ranking') }}"
+            class="btn btn-primary"
+        >
+            Ranking y viabilidad
+        </a>
 
     </div>
+
+</div>
 
 @endsection

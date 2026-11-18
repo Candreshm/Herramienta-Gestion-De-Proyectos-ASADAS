@@ -1,102 +1,272 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Gestión de Usuarios</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        th { background-color: #f4f4f4; }
-        .btn { padding: 5px 10px; text-decoration: none; border-radius: 3px; color: white; }
-        .btn-primary { background-color: #0066cc; }
-        .btn-edit { background-color: #009900; }
-        .btn-activar { background-color: #009900; }
-        .btn-desactivar { background-color: #cc6600; }
-        .alert-success { background-color: #d4edda; color: #155724; padding: 10px; border-radius: 3px; margin-bottom: 15px; border: 1px solid #c3e6cb; }
-        .alert-error { background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 3px; margin-bottom: 15px; border: 1px solid #f5c6cb; }
-        .estado-activo { color: green; font-weight: bold; }
-        .estado-inactivo { color: red; font-weight: bold; }
-        .acciones form { display: inline; }
-        .acciones button { border: none; cursor: pointer; padding: 5px 10px; border-radius: 3px; color: white; }
-    </style>
-</head>
-<body>
+@extends('layouts.app')
 
-    <h1>Gestión de Usuarios</h1>
+@section('title', 'Gestión de usuarios')
 
-    <p>
-        <a href="{{ route('dashboard') }}">← Volver al Panel</a> |
-        <a href="{{ route('usuarios.create') }}" class="btn btn-primary">+ Nuevo Usuario</a>
-    </p>
+@section('content')
 
-    @if(session('success'))
-        <div class="alert-success">{{ session('success') }}</div>
-    @endif
+<div class="page-header">
 
-    @if(session('error'))
-        <div class="alert-error">{{ session('error') }}</div>
-    @endif
+    <div>
+        <h2 class="page-title">
+            Gestión de usuarios
+        </h2>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Correo</th>
-                <th>Rol</th>
-                <th>Estado</th>
-                <th>Último acceso</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($users as $user)
+        <p class="page-subtitle">
+            Consulte, filtre y administre las cuentas del sistema.
+        </p>
+    </div>
+
+    <div class="actions">
+        <a
+            href="{{ route('dashboard') }}"
+            class="btn btn-secondary"
+        >
+            Volver al panel
+        </a>
+
+        <a
+            href="{{ route('usuarios.create') }}"
+            class="btn btn-primary"
+        >
+            + Nuevo usuario
+        </a>
+    </div>
+
+</div>
+
+<div class="card">
+
+    <form
+        method="GET"
+        action="{{ route('usuarios.index') }}"
+        class="filters-grid"
+    >
+
+        <div>
+            <label
+                for="buscar"
+                class="form-label"
+            >
+                Buscar
+            </label>
+
+            <input
+                type="search"
+                id="buscar"
+                name="buscar"
+                value="{{ request('buscar') }}"
+                placeholder="Nombre o correo"
+            >
+        </div>
+
+        <div>
+            <label
+                for="role_id"
+                class="form-label"
+            >
+                Rol
+            </label>
+
+            <select
+                id="role_id"
+                name="role_id"
+            >
+                <option value="">
+                    Todos
+                </option>
+
+                @foreach($roles as $role)
+                    <option
+                        value="{{ $role->id }}"
+                        {{ (string) request('role_id') === (string) $role->id ? 'selected' : '' }}
+                    >
+                        {{ $role->nombre }}
+                    </option>
+                @endforeach
+
+            </select>
+        </div>
+
+        <div>
+            <label
+                for="estado"
+                class="form-label"
+            >
+                Estado
+            </label>
+
+            <select
+                id="estado"
+                name="estado"
+            >
+                <option value="">
+                    Todos
+                </option>
+
+                <option
+                    value="activo"
+                    {{ request('estado') === 'activo' ? 'selected' : '' }}
+                >
+                    Activos
+                </option>
+
+                <option
+                    value="inactivo"
+                    {{ request('estado') === 'inactivo' ? 'selected' : '' }}
+                >
+                    Inactivos
+                </option>
+            </select>
+        </div>
+
+        <div class="form-actions">
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Aplicar
+            </button>
+
+            <a
+                href="{{ route('usuarios.index') }}"
+                class="btn btn-secondary"
+            >
+                Limpiar
+            </a>
+        </div>
+
+    </form>
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
                 <tr>
-                    <td>{{ $user->name }}</td>
-                    <td>{{ $user->email }}</td>
-                    <td>{{ $user->role?->nombre ?? 'Sin rol' }}</td>
-                    <td>
-                        @if($user->activo)
-                            <span class="estado-activo">Activo</span>
-                        @else
-                            <span class="estado-inactivo">Inactivo</span>
-                        @endif
-                    </td>
-                    <td>{{ $user->ultimo_acceso?->format('d/m/Y H:i') ?? 'Nunca' }}</td>
-                    <td class="acciones">
-                        <a href="{{ route('usuarios.edit', $user) }}" class="btn btn-edit">Editar</a>
-
-                        @if($user->activo)
-                            <form action="{{ route('usuarios.desactivar', $user) }}" method="POST">
-                                @csrf
-                                @method('PATCH')
-                                <button type="submit" class="btn-desactivar"
-                                        onclick="return confirm('¿Desactivar este usuario?')">
-                                    Desactivar
-                                </button>
-                            </form>
-                        @else
-                            <form action="{{ route('usuarios.activar', $user) }}" method="POST">
-                                @csrf
-                                @method('PATCH')
-                                <button type="submit" class="btn-activar">Activar</button>
-                            </form>
-                        @endif
-                    </td>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Último acceso</th>
+                    <th>Acciones</th>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="6" style="text-align:center;">No hay usuarios registrados.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+            </thead>
 
-    <div style="margin-top: 20px;">
+            <tbody>
+
+                @forelse($users as $user)
+
+                    <tr>
+
+                        <td>
+                            {{ $user->name }}
+                        </td>
+
+                        <td>
+                            {{ $user->email }}
+                        </td>
+
+                        <td>
+                            {{ $user->role?->nombre ?? 'Sin rol' }}
+                        </td>
+
+                        <td>
+                            @if($user->activo)
+
+                                <span class="badge badge-success">
+                                    Activo
+                                </span>
+
+                            @else
+
+                                <span class="badge badge-danger">
+                                    Inactivo
+                                </span>
+
+                            @endif
+                        </td>
+
+                        <td>
+                            {{ $user->ultimo_acceso?->format('d/m/Y H:i') ?? 'Nunca' }}
+                        </td>
+
+                        <td>
+
+                            <div class="table-actions">
+
+                                <a
+                                    href="{{ route('usuarios.edit', $user) }}"
+                                    class="btn btn-primary"
+                                >
+                                    Editar
+                                </a>
+
+                                @if($user->activo)
+
+                                    <form
+                                        action="{{ route('usuarios.desactivar', $user) }}"
+                                        method="POST"
+                                    >
+                                        @csrf
+                                        @method('PATCH')
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-warning"
+                                            onclick="return confirm('¿Desactivar este usuario?')"
+                                        >
+                                            Desactivar
+                                        </button>
+                                    </form>
+
+                                @else
+
+                                    <form
+                                        action="{{ route('usuarios.activar', $user) }}"
+                                        method="POST"
+                                    >
+                                        @csrf
+                                        @method('PATCH')
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-success"
+                                        >
+                                            Activar
+                                        </button>
+                                    </form>
+
+                                @endif
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                @empty
+
+                    <tr>
+                        <td
+                            colspan="6"
+                            class="empty-state"
+                        >
+                            No se encontraron usuarios con los criterios seleccionados.
+                        </td>
+                    </tr>
+
+                @endforelse
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <div class="section-spacing">
         {{ $users->links() }}
     </div>
 
-</body>
-</html>
+</div>
 
-
+@endsection

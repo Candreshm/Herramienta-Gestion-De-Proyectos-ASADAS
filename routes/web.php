@@ -6,6 +6,12 @@ use App\Http\Controllers\EvaluacionProyectoController;
 use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\ViabilidadController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ModeloViabilidadController;
+use App\Http\Controllers\ValidacionPresupuestariaController;
+use App\Http\Controllers\AprobacionProyectoController;
+use App\Http\Controllers\TareaProyectoController;
+use App\Http\Controllers\SeguimientoProyectoController;
+use App\Http\Controllers\DocumentoProyectoController;
 
 Route::middleware('guest')->group(function () {
 
@@ -27,6 +33,37 @@ Route::middleware('auth')->group(function () {
 
     // HU-02 y HU-03: Gestión de usuarios (solo Administrador)
     Route::middleware('admin')->group(function () {
+// HU-13: Validación presupuestaria
+Route::get(
+    '/proyectos/{proyecto}/presupuesto',
+    [ValidacionPresupuestariaController::class, 'edit']
+)->name('presupuesto.validacion.edit');
+
+Route::put(
+    '/proyectos/{proyecto}/presupuesto',
+    [ValidacionPresupuestariaController::class, 'update']
+)->name('presupuesto.validacion.update');
+
+// HU-12, HU-14 y HU-15
+Route::get(
+    '/proyectos/{proyecto}/aprobacion',
+    [AprobacionProyectoController::class, 'edit']
+)->name('proyectos.aprobacion.edit');
+
+Route::put(
+    '/proyectos/{proyecto}/aprobacion',
+    [AprobacionProyectoController::class, 'update']
+)->name('proyectos.aprobacion.update');
+    // HU-11: Configuración del modelo de viabilidad
+Route::get(
+    '/configuracion/modelo-viabilidad',
+    [ModeloViabilidadController::class, 'edit']
+)->name('modelo-viabilidad.edit');
+
+Route::put(
+    '/configuracion/modelo-viabilidad',
+    [ModeloViabilidadController::class, 'update']
+)->name('modelo-viabilidad.update');
 
         Route::get('/usuarios', [UserController::class, 'index'])
             ->name('usuarios.index');
@@ -58,7 +95,79 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/proyectos', [ProyectoController::class, 'store'])
             ->name('proyectos.store');
+// HU-16: Gestión de tareas Kanban
+Route::get(
+    '/proyectos/{proyecto}/tareas',
+    [TareaProyectoController::class, 'index']
+)->name('proyectos.tareas.index');
 
+Route::post(
+    '/proyectos/{proyecto}/tareas',
+    [TareaProyectoController::class, 'store']
+)->name('proyectos.tareas.store');
+
+Route::patch(
+    '/proyectos/{proyecto}/tareas/{tarea}/estado',
+    [TareaProyectoController::class, 'cambiarEstado']
+)->name('proyectos.tareas.estado');
+
+Route::delete(
+    '/proyectos/{proyecto}/tareas/{tarea}',
+    [TareaProyectoController::class, 'destroy']
+)->name('proyectos.tareas.destroy');
+
+// HU-17: Seguimiento de ejecución
+Route::get(
+    '/proyectos/{proyecto}/seguimiento',
+    [SeguimientoProyectoController::class, 'index']
+)->name('proyectos.seguimiento.index');
+
+Route::post(
+    '/proyectos/{proyecto}/seguimiento/hitos',
+    [SeguimientoProyectoController::class, 'storeHito']
+)->name('proyectos.seguimiento.hitos.store');
+
+Route::patch(
+    '/proyectos/{proyecto}/seguimiento/hitos/{hito}',
+    [SeguimientoProyectoController::class, 'updateHito']
+)->name('proyectos.seguimiento.hitos.update');
+
+Route::post(
+    '/proyectos/{proyecto}/seguimiento/avances',
+    [SeguimientoProyectoController::class, 'storeAvance']
+)->name('proyectos.seguimiento.avances.store');
+
+Route::post(
+    '/proyectos/{proyecto}/seguimiento/incidencias',
+    [SeguimientoProyectoController::class, 'storeIncidencia']
+)->name('proyectos.seguimiento.incidencias.store');
+
+Route::patch(
+    '/proyectos/{proyecto}/seguimiento/incidencias/{incidencia}',
+    [SeguimientoProyectoController::class, 'updateIncidencia']
+)->name('proyectos.seguimiento.incidencias.update');
+
+
+// HU-18: Expediente documental
+Route::get(
+    '/proyectos/{proyecto}/documentos',
+    [DocumentoProyectoController::class, 'index']
+)->name('proyectos.documentos.index');
+
+Route::post(
+    '/proyectos/{proyecto}/documentos',
+    [DocumentoProyectoController::class, 'store']
+)->name('proyectos.documentos.store');
+
+Route::get(
+    '/proyectos/{proyecto}/documentos/{documento}/download',
+    [DocumentoProyectoController::class, 'download']
+)->name('proyectos.documentos.download');
+
+Route::delete(
+    '/proyectos/{proyecto}/documentos/{documento}',
+    [DocumentoProyectoController::class, 'destroy']
+)->name('proyectos.documentos.destroy');
         // HU-05: Información complementaria de la iniciativa
         Route::get('/proyectos/{proyecto}/hu05', [ProyectoController::class, 'editHu05'])
             ->name('proyectos.hu05.edit');
