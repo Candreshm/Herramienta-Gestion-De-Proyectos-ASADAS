@@ -11,18 +11,19 @@ use Illuminate\View\View;
 
 class EvaluacionProyectoController extends Controller
 {
-    public function index(Proyecto $proyecto): View
-    {
-        $evaluaciones = $proyecto->evaluaciones()
-            ->with(['evaluador', 'criterios'])
-            ->latest('fecha_evaluacion')
-            ->get();
+public function index(Proyecto $proyecto): View
+{
+    $evaluaciones = $proyecto->evaluaciones()
+        ->with(['evaluador', 'criterios'])
+        ->latest('fecha_evaluacion')
+        ->paginate(10)
+        ->withQueryString();
 
-        return view('evaluaciones.index', compact(
-            'proyecto',
-            'evaluaciones'
-        ));
-    }
+    return view(
+        'evaluaciones.index',
+        compact('proyecto', 'evaluaciones')
+    );
+}
 
     public function create(Proyecto $proyecto): View
     {

@@ -1,53 +1,80 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio de sesión</title>
-</head>
+@extends('layouts.app')
 
-<body>
+@section('title', 'Inicio de sesión')
 
-    <h1>Herramienta de Gestión de Proyectos para ASADAS</h1>
+@section('content')
 
-    <h2>Inicio de sesión</h2>
+<div class="card auth-card">
+
+    <h2 class="page-title">
+        Inicio de sesión
+    </h2>
 
     @if ($errors->any())
-        <div>
+
+        <div class="alert alert-error">
             <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
             </ul>
         </div>
+
     @endif
 
-    <form method="POST" action="{{ route('login.authenticate') }}">
+    <form
+        method="POST"
+        action="{{ route('login.authenticate') }}"
+    >
         @csrf
 
-        <div>
-            <label for="email">Correo electrónico</label>
+        <div class="form-group-spacing">
+
+            <label
+                for="email"
+                class="form-label"
+            >
+                Correo electrónico
+            </label>
+
             <input
                 type="email"
                 id="email"
                 name="email"
                 value="{{ old('email') }}"
+                required
+                autofocus
             >
+
         </div>
 
-        <div>
-            <label for="password">Contraseña</label>
+        <div class="form-group-spacing">
+
+            <label
+                for="password"
+                class="form-label"
+            >
+                Contraseña
+            </label>
+
             <input
                 type="password"
                 id="password"
                 name="password"
+                required
             >
+
         </div>
 
-        <button type="submit">
+        <button
+            type="submit"
+            class="btn btn-primary"
+        >
             Iniciar sesión
         </button>
+
     </form>
 
-</body>
-</html>
+</div>
+
+@endsection

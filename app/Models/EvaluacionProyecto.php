@@ -15,6 +15,12 @@ class EvaluacionProyecto extends Model
         'evaluador_id',
         'fecha_evaluacion',
         'observaciones',
+        'nota_tecnica',
+        'nota_financiera',
+        'nota_operativa',
+        'nota_normativa',
+        'puntaje_total',
+        'dictamen',
     ];
 
     protected function casts(): array

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ModeloViabilidad extends Model
 {
@@ -12,28 +11,41 @@ class ModeloViabilidad extends Model
 
     protected $fillable = [
         'nombre',
-        'criterios',
-        'umbral_minimo',
+        'peso_tecnico',
+        'peso_financiero',
+        'peso_operativo',
+        'peso_normativo',
+        'umbral_viable',
         'activo',
-        'actualizado_por_id',
+        'configurado_por_id',
     ];
 
     protected function casts(): array
     {
         return [
-            'criterios' => 'array',
-            'umbral_minimo' => 'decimal:2',
+            'peso_tecnico' => 'decimal:2',
+            'peso_financiero' => 'decimal:2',
+            'peso_operativo' => 'decimal:2',
+            'peso_normativo' => 'decimal:2',
+            'umbral_viable' => 'decimal:2',
             'activo' => 'boolean',
         ];
     }
 
-    public function actualizadoPor(): BelongsTo
+    public function configuradoPor(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'actualizado_por_id');
+        return $this->belongsTo(
+            User::class,
+            'configurado_por_id'
+        );
     }
 
-    public function proyectosEvaluados(): HasMany
+    public function getSumaPesosAttribute(): float
     {
-        return $this->hasMany(Proyecto::class, 'viabilidad_modelo_id');
+        return
+            (float) $this->peso_tecnico +
+            (float) $this->peso_financiero +
+            (float) $this->peso_operativo +
+            (float) $this->peso_normativo;
     }
 }

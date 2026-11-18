@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
 
 class Proyecto extends Model
 {
@@ -21,10 +23,6 @@ class Proyecto extends Model
     'nivel_riesgo',
     'criticidad',
     'prioridad',
-    'viabilidad_puntuacion',
-    'viabilidad_resultado',
-    'viabilidad_evaluada_at',
-    'viabilidad_modelo_id',
     'estado_proyecto_id',
     'creado_por_id',
     'activo',
@@ -34,8 +32,6 @@ class Proyecto extends Model
     {
          return [
             'costo_estimado' => 'decimal:2',
-            'viabilidad_puntuacion' => 'decimal:2',
-            'viabilidad_evaluada_at' => 'datetime',
             'activo' => 'boolean',
          ];
     }
@@ -56,6 +52,16 @@ class Proyecto extends Model
         );
     }
 
+public function evaluacion()
+{
+    return $this->hasOne(
+        EvaluacionProyecto::class,
+        'proyecto_id'
+    )->ofMany([
+        'fecha_evaluacion' => 'max',
+        'id' => 'max',
+    ]);
+}
     public function evidencias(): HasMany
     {
         return $this->hasMany(
@@ -72,12 +78,57 @@ class Proyecto extends Model
         );
     }
 
-    public function tareas(): HasMany
-    {
-        return $this->hasMany(
-            Tarea::class,
-            'proyecto_id'
-        );
-    }
+    public function validacionPresupuestaria(): HasOne
+{
+    return $this->hasOne(
+        ValidacionPresupuestaria::class,
+        'proyecto_id'
+    );
+}
 
+public function aprobacion(): HasOne
+{
+    return $this->hasOne(
+        AprobacionProyecto::class,
+        'proyecto_id'
+    );
+}
+
+public function tareas(): HasMany
+{
+    return $this->hasMany(
+        TareaProyecto::class,
+        'proyecto_id'
+    );
+}
+public function hitos(): HasMany
+{
+    return $this->hasMany(
+        HitoProyecto::class,
+        'proyecto_id'
+    );
+}
+
+public function avances(): HasMany
+{
+    return $this->hasMany(
+        AvanceProyecto::class,
+        'proyecto_id'
+    );
+}
+
+public function incidencias(): HasMany
+{
+    return $this->hasMany(
+        IncidenciaProyecto::class,
+        'proyecto_id'
+    );
+}
+public function documentos(): HasMany
+{
+    return $this->hasMany(
+        DocumentoProyecto::class,
+        'proyecto_id'
+    );
+}
 }
